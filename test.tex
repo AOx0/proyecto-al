@@ -1,0 +1,254 @@
+
+\documentclass[a4paper]{article}
+\usepackage[spanish]{babel}
+
+\usepackage[backend=biber,
+style=apa,
+]{biblatex}
+
+
+
+\defbibenvironment{bibliography}
+  {\enumerate
+     {}
+     {\setlength{\leftmargin}{\bibhang}%
+      \setlength{\itemindent}{-\leftmargin}%
+      \setlength{\itemsep}{\bibitemsep}%
+      \setlength{\parsep}{\bibparsep}}}
+  {\endenumerate}
+  {\item}
+
+
+\usepackage{caption} % Para poner captions the multiples renglones
+\usepackage{float} % Para colocar las imágenes
+\usepackage{fullpage} % Package to use full page
+
+
+\usepackage{parskip} % Package to tweak paragraph skipping
+\usepackage{tikz} % Package for drawing
+\usepackage{amsmath}
+\usepackage{csquotes}
+
+\usepackage{graphicx} % Para instertar pdfs como imágenes
+
+\renewcommand{\figurename}{Figura}
+\renewcommand{\tablename}{Tabla}
+
+
+\addbibresource{bibliography.bib}
+\begin{document}
+
+\hspace{0pt}
+\vfill
+
+\begin{center}
+    {\huge non}\\    \quad\\
+    {\large Universidad Panamericana}\\
+    {\large Facultad de Ingeniería}\\
+    \quad\\
+    \quad\\
+
+    \quad\\
+    \quad\\
+    \begin{tabular}{c|c}
+        Full Name Person 1 & idididid\\
+        Full Name Person 2 & idididid\\
+        Full Name Person 3 & idididid\\
+    \end{tabular}\\
+    \quad\\
+    \quad\\
+    Month Year\\
+\end{center}
+
+\vfill
+\newpage
+
+
+\section{Introducción}
+Monterrey es una de las ciudades más grandes del norte de México. Al ser una ciudad grande, centro de negocios, lugar lleno de turismo y cultura, hay una gran concentración de gente.
+
+Las personas prefieren muchas veces tener un auto a tomar el transporte público por temor a asaltos, por comodidad, etc. Justo esto pasa en Monterrey y sus alrededores, donde el sistema público no tiene el uso suficiente y mezclado con los coches que transitan causa una dificultad considerable para circular.
+
+Lo anterior mencionado y más, puede generar que haya gran cantidad de accidentes, en este trabajo anañizaremos un poco la situación de Monterrey, para desvelar el por qué es uno de los lugares que más accidentes terrestres de tránsito presenta.
+ 
+\section{Análisis de la zona}
+
+Localizado en Latitud: 25º 39´ 53” N y  Longitud: 100º 18´ 39” E a 530 m sobre el nivel del mar. La ciudad tiene la siguiente vista área:
+
+
+\begin{figure}[H]
+    \centering
+
+    \caption{Vista aerea de Monterrey y las montañas que determinan su forma. \\Fuente: maps.apple.com}
+    \label{fig:my_label}
+\end{figure}
+
+En la cual se puede ver como la ciudad rodea a distintos terrenos que tienen elevación. El número 1 es la reserva de Las Mitras, la márcada con el número 2 es la reserva de Topo Chico, el número 3 esta ubicado en donde se encuentra parte de la Sierra Madre Occidental y el número 4 corresponde al Cerro de la Silla.
+
+En la Figura \ref{fig:aerea2} es posible visualizar, de entre la extensión de la ciudad, las partes que conforman el municipio de Monterrey. En este estudio tomaremos en cuenta toda la estensión de la ciudad, incluyendo municipios aledaños que no son Monterrey.
+
+\begin{figure}[H]
+    \centering
+
+    \caption{El municipio de Monterrey. \\Fuente: maps.apple.com}
+    \label{fig:aerea2}
+\end{figure}
+
+Nuevo León cuenta con 51 municipios. Los municipos que colindan con Monterrey son: Cadereyta Jiménez, García, San Pedro Garza García, General Escobedo, Guadalupe, Juárez, Santa Catarina y Santiago.
+
+\autocite{RN1}
+
+
+Nuevo León tiene la clave única, asignada listada en el catálogo de claves unicas del INEGI, el número 19. A su vez, Monterrey tiene la clave única de municipio número 39.  
+
+Es un clima extremo, debido a que la temperatura media anual es de 23°C, siendo la mínima de 8°C y la máxima de 43°C. En los meses de Junio, Julio y Agosto son los meses más calurosos. De Julio a Septiembre es el ciclo de lluvias. Con lo cual se puede decir que su clima tiende a ser templado y seco.
+
+\begin{figure}[H]
+    \centering
+
+    \caption{Crecimiento de población de Nuevo León, Monterrey y los municipios que lo rodean.\autocite{Poblacion}}
+    \label{fig:Pob2}
+\end{figure}
+
+Aunque Monterrey en sí no ha tenido gran crecimiento, los municipios que lo rodéan y Nuevo León en general han tenido un gran crecimiento respecto a 1990, tal como se puede ver en la Figura \ref{fig:Pob1}
+
+\begin{figure}[H]
+    \centering
+
+    \caption{Diferencia de población entre 1990 y 2020.\autocite{Poblacion}}
+    \label{fig:Pob1}
+\end{figure}
+
+En la Figura \ref{fig:Pob3}, que tiene un acercamiento mayor a la Figura \ref{fig:Pob2} ya que se elimió el crecimiento de Nuevo León en general,  podemos ver cómo la población de Monterrey se ha mantenido a lo largo de los últimos 30 años, por otro lado los municipios que están inmediatamente a los alrededores han presentado un crecimiento de población considerable, causando la ampliación de la ciudad y que esta se desarrolle no solo en un municipio, si no en varios como se puede observar en la Figura  \ref{fig:my_label}
+
+
+\begin{figure}[H]
+    \centering
+
+    \caption{Crecimiento de población de Monterrey y los municipios que lo rodean.\autocite{Poblacion}}
+    \label{fig:Pob3}
+\end{figure}
+
+
+Esto representa 249,547 habitantes nuevos solo en el área de Monterrey y los municipios cercanos entre 2015 y 2020 y 664,938 nuevos habitantes en Nuevo León, muchos de los cuales viajan a Monterrey por cuestiones de trabajo, etc.
+
+2,512,280 de personas, según \autocite{Poblacion},  sólo en Monterrey y sus inmediatos alrededores, conviviendo en un espacio reducido. Sumándole gente que probablemente viaje desde otros muicipios más alejados, o incluso otras partes, por turismo en las reservas o por trabajo. Más adelante, en la Figura \ref{fig:Carreteras} es claro cómo todos los caminos llevan al centro, a Monterrey.
+
+\autocite{RN5}
+
+ El 68\% es un clima seco y el 20\% semiseco suelen estar en la llanura costera del Golfo norte, el 7\% es un clima subhúmedo suele localizar en las partes altas de las sierras, por último el 5\% es un clima muy seco en dirección a la Sierra madre Occidental.
+
+\autocite{RN6}
+
+La población en la ciudad de Monterrey se incremento exponencialmente empezando con 3,098,736.0 de personas en 1990 a 5,784,442.0 de personas en 2020, este crecimiento de casi el 50 porciento en 30 años es impresionante, esto a puesto a prueba la eficacia de los metodos de transporte dentro del area metropolitana para mover a más personas.
+
+\autocite{Poblacion}
+
+\section{Transportes}
+El Sistema de Transporte Colectivo de Monterrey conocido como STC Metrorrey es un sistema público descentralizado.
+
+Es una empresa establecida para operar y administrar el sistema de metro de la ciudad, desde su creación  las responsabilidades de esta se han ampliado a la administración del sistema alimentador de metro (Trasmetro).
+
+\autocite{Manchester}
+
+
+\subsubsection{Recorrido Linea 3}
+Noreste - Sur
+\begin{enumerate}
+\item Hospital Metropolitano
+\item Los Angeles
+\item Ruiz Cortines
+\item Col. Moderna
+\item Metalúrgica
+\item Felix Gómez
+\item Col. Obrera
+\item Santa Lucia
+\item General I. Zaragoza
+\end{enumerate}
+
+\autocite{LineasMetro}
+
+\subsection{TransMetro}
+Es una alternativa ante la demanda del metrorrey y asi poder hacer un aruta que abarque las zonas con mayor tránsito. "El concepto de TransMetro consiste en operar un sistema de autobuses de alta calidad, denominado autobuses TransMetro, cuya característica principal es el estar equipado de manera similar al Metro en donde el usuario no distinguirá diferencias en la calidad del servicio que se le ofrece" (Sistema TransMetro, 2009-2015). La ventaja dee poder usar el trasnmetro es que el usario pueda realizar transbordos rapidamente al Metrorrey ya que estos estan unidos ademas de que es gratuito el transbordo que haces.
+
+\autocite{TEC1}
+
+\subsection{MetroEnlace}
+Esta opción es para los pasajeros que desean recorrer una mayor distancia por ejemplo a distintas ciudades, conecta las ciudades de Cadereyta, Ciénega de Flores, Montemorelos y Linares con las dos estaciones de enlace con la red de Metro, es decir las estaciones Exposición y Cuauhtémoc. 
+Alvarado, M. D. P. A., \& ALVARADO, M. D. P. A. (2012). Estudio de caso sobre el impacto en la ejecución del programa de transporte masivo (PROTRAM) en las grandes ciudades: caso comparativo del sistema Metrobús del Distrito Federal con el corredor vial BRT en la ciudad de Monterrey.
+
+\autocite{Manchester}
+
+
+\section{Carreteras y automóviles}
+El total  de autos registrados en  el área metropolitana de Monterrey en 2017  es 1,248,005 automoviles con un senso que nos indica que por  cada 3 habitantes de está área tienen al menos 1 automovil.
+\autocite{SCT}
+
+\begin{figure}[H]
+    \centering
+
+    \caption{Imagen de las cerreteras disponibles en Nuevo Léon.\\\autocite{SCT}}
+    \label{fig:Carreteras}
+\end{figure}
+
+\subsection{Red Federal Libre}
+\begin{enumerate}
+\item Cadereyta de Jiménez - Allende MEX-009 
+\item Ciudad Victoria - Monterrey MEX-085
+\item La Unión - El Encadenado MEX 
+\item Libramiento de China MEX-040 
+\end{enumerate}
+\autocite{SCT}
+
+\section{Accidentes automovilísticos}
+
+
+
+\noindent\begin{minipage}{0.5\textwidth}% adapt widths of minipages to your needs
+\begin{figure}[H]
+    \centering
+
+    \caption{Gráfico de comparación de número de\\accidentes en Monterrey en el período 2006-2020\\respecto al total en toda la República Mexicana\\\autocite{DatosInegiDeVerdad}}
+    \label{fig:Aporte}
+\end{figure}
+\end{minipage}%
+\hfill%
+\begin{minipage}{0.5\textwidth}
+Según los datos de la INEGI, disponibles en una base de datos abierta titulada \textit{Accidentes de tránsito terreste en zonas urbanas y suburbanas}, del total de 6,002,135 de accidentes ocurridos en la República Mexicana entre el año 2006 y 2020, el 18.19\% de los accidentes ocurrieron en Nuevo León, donde del 100\% de accidentes, el 37.54\% de accidentes provienen solo del muicipio de Monterrey, dando como resultado que de los 6,002,135 de siniestros, 409,999 han ocurrido solo en el municipio de Monterrey. 
+
+\hspace{0pt}\\
+En la Figura \ref{fig:Aporte} se ve de manera gráfica el gran aporte que representa la cifra de accidentes automovilísticos solo en Monterrey al total de los accidentes ocurridos en el período del 2006 al año 2020. 
+
+\autocite{DatosInegiDeVerdad}
+\end{minipage}
+
+\hspace{0pt}\\
+El total de accidentes de Nuevo Léon en el período mencionado se puede observar en la Figura \ref{fig:Acc}, dónde se desgloza por años, mostrando tanto la cantidad total de accidentes en el Estado (azul) como la cantidad de accidentes registradas solo en el municipio de Monterrey (amarillo).
+
+\begin{figure}[H]
+    \centering
+
+    \caption{Accidentes por año en el período de 2006-2020\\\autocite{DatosInegiDeVerdad}}
+    \label{fig:Acc}
+\end{figure}
+
+
+\section{Planteamiento del problema.}
+
+Los datos previos, después de ser analizados, permiten concluir que Monterrey tiene un problema de movilidad.
+
+Todas las zonas conurbadas tienen que moverse a la metropolitana,  donde, tan solo sus residentes, tienen por cada 3 un vehículo, lo que representa una gran concentración de vehículos en un espacio reducido.
+
+En 2017 se reportaron 5,784,442 de habitantes registrados con 1,248,005 repartidos entre los mismos. Con el gran crecimiento de la población el número de vehículos en circulación también aumenta. 
+
+Es notable como con el aumento de personas no aumentaron los medios de transporte público o las carreteras, causando más densidad de vehículos en las carreteras y autopistas de la ciudad, hecho que peude explicar por qué el 72\% de los accidentes es provocado por vehículos.
+
+El metrobús, que estaba planeado fuera subterráneo en 1987 y que fue modificado para ajustarse al presupuesto, gasta un carril de las avenidas, cosa que no fuera contraproducente si la gente usara el servicio, pero a pesar de que está disponible, no se ha disminuido el número de personas que usen el auto, o al menos no al ritmo al que crece la ciudad. 
+
+Haciendo un análisis preciso de los datos, pretendemos encontrar una solución que ayude a mitigar los problemas con los accidentes viales terrestres ocurridos en Monterrey y alrededores.
+
+
+\printbibliography
+
+Gráficos realizados en Mathematica 12.3.1.0 con datos del Instituto Nacional de Estadística y Geografía (INEGI).
+\end{document}

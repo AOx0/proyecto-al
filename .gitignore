@@ -1,0 +1,12 @@
+_minted-test/
+.texpadtmp/
+bibliography.bib.bbl
+bibliography.bib.blg
+test.aux
+test.bbl
+test.bcf
+test.blg
+test.log
+test.run.xml
+test.synctex.gz
+test.pdf
