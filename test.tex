@@ -146,7 +146,7 @@ el mismo, por lo que la librería es amigable con ejecutables, imágenes, etc.
 
 La librería contará con el soporte para cifrar ejecutables, ofreciendo una
 manera de que se autodescifren sin exponer de manera explícita la manera en que
-lo hacen. 
+lo hacen.
 
 Por último, usaremos la librería para programar una aplicación de la línea
 de comandos que cifra archivos de todo tipo.
@@ -181,26 +181,26 @@ combinaciones diferentes.
 
 Las computadoras entienden la información de distinta forma a los humanos.
 Estas interpretan bytes que resultan en instrucciones para la CPU; en
-caracteres de 
+caracteres de
 un archivo de texto, en piezas para armar una imagen, en direcciones de memoria
 y en cualquier dato que se procese, almacene o ejecute en las mismas.
 
 La forma en que una computadora interpreta se define con las instrucciones que
-tiene su CPU, su unidad central de procesamiento. 
+tiene su CPU, su unidad central de procesamiento.
 Cada una cuenta con instrucciones distintas, como son los procesadores Intel o
 Ryzen.
 
 La manera en que se moldearon las compuertas lógicas dentro de un procesador
-hará que el valor, por poner un ejemplo, 47 sea el que 
+hará que el valor, por poner un ejemplo, 47 sea el que
 indique a la máquina que realizara una suma y que por ende debe tomar los
 siguientes dos valores para sumarlos.
 
 Así como la computadora necesita entender los bytes con las instrucciones que
-tiene definidas, los humanos que entiendan las instrucciones 
+tiene definidas, los humanos que entiendan las instrucciones
 y la CPU, pueden entender el funcionamiento de todo lo que sucede dentro de
 ella.
 
-Por ello es necesario proteger la información, desde archivos de texto como 
+Por ello es necesario proteger la información, desde archivos de texto como
 
 
 \[
@@ -253,7 +253,7 @@ Por ello es necesario proteger la información, desde archivos de texto como
 \right)
 }
 \]
-    
+
 \section{Experimentación}
 
 \subsection{Método 1}
@@ -394,7 +394,7 @@ Show[
             assoc = CountRepetitions[baa],
             assoc2 = CountRepetitions[Flatten[bx]]
         },
-        
+
         ListLinePlot[
             {
                 KeyValueMap[Log[#2] &]@KeySortBy[assoc, assoc[#] &],
