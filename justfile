@@ -1,8 +1,10 @@
-build_remote: && open
-    cd .. && rsync -azP proyecto kali:~ --exclude=".git" --exclude="test.pdf" --exclude="out"
+build_remote: sync && open
     ssh kali  "pwd && cd ~/proyecto && just build 1 1 && exit"
     cd .. && rsync -azP kali:~/proyecto/test.pdf proyecto
-    
+
+sync:
+    cd .. && rsync -azP proyecto kali:~ --exclude=".git" --exclude="test.pdf" --exclude="out" --exclude=".idea"
+
 open:
     qil Preview
     open test.pdf -a Preview    
