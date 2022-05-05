@@ -29,10 +29,17 @@ style=apa,
 \usepackage{amsmath}
 \usepackage{csquotes}
 
-\usepackage{graphicx} % Para instertar pdfs como imágenes
+\usepackage{graphicx} % Para instertar pdfs como imágenes y usar \scalebox
+
+\newcommand*{\Scale}[2][4]{\scalebox{#1}{$#2$}}%
+\newcommand*{\Resize}[2]{\resizebox{#1}{!}{$#2$}}%
+
+\usepackage{minted} % Para colocar código
+\usemintedstyle{bw} % Para usar blanco y negro como colores de código
 
 \renewcommand{\figurename}{Figura}
 \renewcommand{\tablename}{Tabla}
+\renewcommand\listingscaption{Listado}
 
 
 \addbibresource{bibliography.bib}
@@ -42,213 +49,368 @@ style=apa,
 \vfill
 
 \begin{center}
-    {\huge non}\\    \quad\\
+    {\huge Aplicación del Álgebra Lineal:\\Ofuscación binaria}\\    \quad\\
     {\large Universidad Panamericana}\\
     {\large Facultad de Ingeniería}\\
     \quad\\
     \quad\\
-
+    \includegraphics[scale=0.3]{UP.png}
+    \quad\\
+    \quad\\
+    Álgebra Lineal\\
+    Prof. Miguel Angel Quintero Zamarron\\
     \quad\\
     \quad\\
     \begin{tabular}{c|c}
-        Full Name Person 1 & idididid\\
-        Full Name Person 2 & idididid\\
-        Full Name Person 3 & idididid\\
+        Osornio López Daniel Alejandro & 0244685\\
+        Paredes García Ricardo & 0241528\\
+        Nombre nombre nombre nombre & idididid\\
     \end{tabular}\\
     \quad\\
     \quad\\
-    Month Year\\
 \end{center}
 
 \vfill
 \newpage
 
+\section{Objetivos}
+
+1. Diseño de un algoritmo de cifrado que utilice como herramienta principal el
+álgebra lineal
+
+2. Creación de un ejecutable de ofuscación de archivos
+
+\quad 2.1. Implementación de una librería de cifrado de archivos en Rust
+
+\quad 2.2. Empleo de libreria para la ofuscación de archivos binarios y de
+texto
+
+\quad 2.3. Verificación de ofuscación con herramientas de ingeniería inversa
+
+\section{Resumen}
+
+El objetivo de este proyecto es utilizar transformaciones lineales como llaves
+para cifrar y descifrar bits de información.
+Se explora el uso de la aritmética modular para mantener la congruencia de la
+información
+ a la vez que se  experimenta con distintos métodos de cifrado por medio de
+algoritmos varios que emplean las transformaciones en su proceso.
+La meta es implementar una herramienta de cifrado y descifrado que pueda
+proteger tanto archivos de texto como ejecutables con un procedimiento
+que permita su auto descifrado junto con soporte a \textit{passphrases} para
+obtener mayor seguridad.
+
+Los métodos estudiados son dos. 
+
+El primero, es una modificación de un cifrado de sustitución. Primero se
+construye una matriz que contiene todos los valores representables en un 
+byte y modifica la matriz por medio de multiplicaciones matriciales para
+después sustituir cada byte en el archivo por su nuevo valor. 
+
+El segundo, ordena todos los bytes del mensaje a cifrar, como puede ser un
+archivo, y le aplica una multiplicación matricial a la totalidad del archivo. 
+
+Para dar soporte al auto-descifrado de los archivos, cuando se utilice la
+bandera --auto, se almacenan en el archivo los valores para descifrarse a si
+mismo, 
+con bytes de meta información que facilitan el proceso y permiten una mayor
+seguridad lograda por el factor aleatorio.Este proyecto plantea la
+implementación 
+de una librería de cifrado de archivos por medio de una ofuscación binaria
+lograda por transformaciones.
+
+\newpage
 
 \section{Introducción}
-Monterrey es una de las ciudades más grandes del norte de México. Al ser una ciudad grande, centro de negocios, lugar lleno de turismo y cultura, hay una gran concentración de gente.
 
-Las personas prefieren muchas veces tener un auto a tomar el transporte público por temor a asaltos, por comodidad, etc. Justo esto pasa en Monterrey y sus alrededores, donde el sistema público no tiene el uso suficiente y mezclado con los coches que transitan causa una dificultad considerable para circular.
+Como estudiantes de la carrera de Inteligencia de Datos y Ciberseguridad,
+decidimos desarrollar el proyecto sobre un tema que permite darnos una noción
+del funcionamiento de las computadoras al desarrollar un sistema que se
+encargue de cifrar archivos de todo tipo, modificando los bytes del mismo por
+los que una transformación lineal dicte.
 
-Lo anterior mencionado y más, puede generar que haya gran cantidad de accidentes, en este trabajo anañizaremos un poco la situación de Monterrey, para desvelar el por qué es uno de los lugares que más accidentes terrestres de tránsito presenta.
- 
-\section{Análisis de la zona}
+Antes de empezar a programar nada, desarrollaremos el algoritmo de cifrado que
+emplearemos haciendo uso de Mathematica 13; describiremos los conceptos
+necesarios para llegar a dicho procedimiento y los patrones que contiene para
+analizar si es posible su cifrado de forma sencilla.
 
-Localizado en Latitud: 25º 39´ 53” N y  Longitud: 100º 18´ 39” E a 530 m sobre el nivel del mar. La ciudad tiene la siguiente vista área:
+Una vez tengamos listo el algoritmo, implementaremos una librería de uso
+general para el cifrado de arreglos de bytes usando el lenguaje de programación
+Rust. Decidimos emplear este lenguaje debido a la facilidad que tiene en su
+sintaxis sumado con las operaciones de bajo nivel que permite realizar con la
+computadora sin necesidad de producir código complejo como pasaría con
+C/C++.
 
+Verificaremos que la librería es estable y arroja como resultado el archivo
+exacto que se tenía antes de ser cifrado. Una ventaja de analizar los archivos
+como arreglos de bytes, es que da igual el \textit{encoding} con el que cuente
+el mismo, por lo que la librería es amigable con ejecutables, imágenes, etc.
 
-\begin{figure}[H]
-    \centering
+La librería contará con el soporte para cifrar ejecutables, ofreciendo una
+manera de que se auto-descifren sin exponer de forma explícita la manera en que
+lo hacen. 
 
-    \caption{Vista aerea de Monterrey y las montañas que determinan su forma. \\Fuente: maps.apple.com}
-    \label{fig:my_label}
-\end{figure}
+Por último, utilizaremos la librería para programar una aplicación de la linea
+de comandos que cifra archivos de todo tipo.
 
-En la cual se puede ver como la ciudad rodea a distintos terrenos que tienen elevación. El número 1 es la reserva de Las Mitras, la márcada con el número 2 es la reserva de Topo Chico, el número 3 esta ubicado en donde se encuentra parte de la Sierra Madre Occidental y el número 4 corresponde al Cerro de la Silla.
+Este es un tema altamente experimental, por lo que se espera encontrar
+limitaciones en el camino.
 
-En la Figura \ref{fig:aerea2} es posible visualizar, de entre la extensión de la ciudad, las partes que conforman el municipio de Monterrey. En este estudio tomaremos en cuenta toda la estensión de la ciudad, incluyendo municipios aledaños que no son Monterrey.
+\newpage
 
-\begin{figure}[H]
-    \centering
+\section{Marco Teórico}
 
-    \caption{El municipio de Monterrey. \\Fuente: maps.apple.com}
-    \label{fig:aerea2}
-\end{figure}
+Todo en las computadoras es representado por los valores 0 y 1 debido a que
+funcionan con el estado o no de un componente, con la presencia o no de
+energía.
+A una unidad que puede valer verdadero (1) o falso (0) se le conoce como bit.
+Los bits son la unidad más pequeña de información en las ciencias de la
+computación.
 
-Nuevo León cuenta con 51 municipios. Los municipos que colindan con Monterrey son: Cadereyta Jiménez, García, San Pedro Garza García, General Escobedo, Guadalupe, Juárez, Santa Catarina y Santiago.
+A un grupo de 8 bits se les agrupa. A esta agrupación se le conoce como byte.
 
-\autocite{RN1}
+Un byte puede contener $2^8$ combinaciones distintas de bits. Por ejemplo:
 
+\[
+\begin{array}{ccc}
+    01000111 & 011111111 & 0000000
+\end{array}
+\]
 
-Nuevo León tiene la clave única, asignada listada en el catálogo de claves unicas del INEGI, el número 19. A su vez, Monterrey tiene la clave única de municipio número 39.  
+Los bits en un byte pueden representar cualquier cantidad entre el 0 al 255 si
+se interpretan como números binarios no firmados. Efectivamente, formando 256
+combinaciones diferentes.
 
-Es un clima extremo, debido a que la temperatura media anual es de 23°C, siendo la mínima de 8°C y la máxima de 43°C. En los meses de Junio, Julio y Agosto son los meses más calurosos. De Julio a Septiembre es el ciclo de lluvias. Con lo cual se puede decir que su clima tiende a ser templado y seco.
+Las computadoras entienden la información de distinta forma a los humanos.
+Estas interpretan bytes que resultan en instrucciones para el CPU; en
+caracteres de 
+un archivo de texto, en piezas para armar una imagen, en direcciones de memoria
+y en cualquier dato que se procese, almacene o ejecute en las mismas.
 
-\begin{figure}[H]
-    \centering
+La forma en que una computadora interpreta se define con las instrucciones que
+tiene su CPU, su unidad central de procesamiento. 
+Cada una cuenta con instrucciones distintas, como son los procesadores Intel o
+Ryzen.
 
-    \caption{Crecimiento de población de Nuevo León, Monterrey y los municipios que lo rodean.\autocite{Poblacion}}
-    \label{fig:Pob2}
-\end{figure}
+La forma en que se moldearon las compuertas lógicas dentro de un procesador
+hará que el valor, por poner un ejemplo, 47 sea el que 
+indique a la máquina que realizara una suma y que por ende debe tomar los
+siguientes dos valores para sumarlos.
 
-Aunque Monterrey en sí no ha tenido gran crecimiento, los municipios que lo rodéan y Nuevo León en general han tenido un gran crecimiento respecto a 1990, tal como se puede ver en la Figura \ref{fig:Pob1}
+Así como la computadora necesita entender los bytes con las instrucciones que
+tiene definidas, los humanos que entiendan las instrucciones 
+y la CPU, pueden entender el funcionamiento de todo lo que sucede dentro de
+ella.
 
-\begin{figure}[H]
-    \centering
-
-    \caption{Diferencia de población entre 1990 y 2020.\autocite{Poblacion}}
-    \label{fig:Pob1}
-\end{figure}
-
-En la Figura \ref{fig:Pob3}, que tiene un acercamiento mayor a la Figura \ref{fig:Pob2} ya que se elimió el crecimiento de Nuevo León en general,  podemos ver cómo la población de Monterrey se ha mantenido a lo largo de los últimos 30 años, por otro lado los municipios que están inmediatamente a los alrededores han presentado un crecimiento de población considerable, causando la ampliación de la ciudad y que esta se desarrolle no solo en un municipio, si no en varios como se puede observar en la Figura  \ref{fig:my_label}
-
-
-\begin{figure}[H]
-    \centering
-
-    \caption{Crecimiento de población de Monterrey y los municipios que lo rodean.\autocite{Poblacion}}
-    \label{fig:Pob3}
-\end{figure}
-
-
-Esto representa 249,547 habitantes nuevos solo en el área de Monterrey y los municipios cercanos entre 2015 y 2020 y 664,938 nuevos habitantes en Nuevo León, muchos de los cuales viajan a Monterrey por cuestiones de trabajo, etc.
-
-2,512,280 de personas, según \autocite{Poblacion},  sólo en Monterrey y sus inmediatos alrededores, conviviendo en un espacio reducido. Sumándole gente que probablemente viaje desde otros muicipios más alejados, o incluso otras partes, por turismo en las reservas o por trabajo. Más adelante, en la Figura \ref{fig:Carreteras} es claro cómo todos los caminos llevan al centro, a Monterrey.
-
-\autocite{RN5}
-
- El 68\% es un clima seco y el 20\% semiseco suelen estar en la llanura costera del Golfo norte, el 7\% es un clima subhúmedo suele localizar en las partes altas de las sierras, por último el 5\% es un clima muy seco en dirección a la Sierra madre Occidental.
-
-\autocite{RN6}
-
-La población en la ciudad de Monterrey se incremento exponencialmente empezando con 3,098,736.0 de personas en 1990 a 5,784,442.0 de personas en 2020, este crecimiento de casi el 50 porciento en 30 años es impresionante, esto a puesto a prueba la eficacia de los metodos de transporte dentro del area metropolitana para mover a más personas.
-
-\autocite{Poblacion}
-
-\section{Transportes}
-El Sistema de Transporte Colectivo de Monterrey conocido como STC Metrorrey es un sistema público descentralizado.
-
-Es una empresa establecida para operar y administrar el sistema de metro de la ciudad, desde su creación  las responsabilidades de esta se han ampliado a la administración del sistema alimentador de metro (Trasmetro).
-
-\autocite{Manchester}
+Por ello es necesario proteger la información, desde archivos de texto como 
 
 
-\subsubsection{Recorrido Linea 3}
-Noreste - Sur
+\[
+\Scale[0.5]{
+\left(
+\begin{array}{ccccccccc}
+ 0 & 1 & 2 & ... & 29 & 30 & 31 \\
+ 32 & 33 & 34 & ... & 61 & 62 & 63
+\\
+ 64 & 65 & 66 & ... & 93 & 94 & 95
+\\
+ 96 & 97 & 98 & ... & 125 & 126 & 127 \\
+ 128 & 129 & 130 & ... & 157 & 158 & 159 \\
+ 160 & 161 & 162 & ... & 189 & 190 & 191 \\
+ 192 & 193 & 194 & ... & 221 & 222 & 223 \\
+ 224 & 225 & 226 & ... & 253 & 254 & 255 \\
+\end{array}
+\right)
+}
+\]
+
+\[
+\Scale[0.5]{
+\left(
+\begin{array}{cccccccccccccccccccccccccccccccc}
+ 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 & 17
+& 18 & 19 & 20 & 21 & 22 & 23 & 24 & 25 & 26 & 27 & 28 & 29 & 30 & 31 \\
+ 32 & 33 & 34 & 35 & 36 & 37 & 38 & 39 & 40 & 41 & 42 & 43 & 44 & 45 & 46 & 47
+& 48 & 49 & 50 & 51 & 52 & 53 & 54 & 55 & 56 & 57 & 58 & 59 & 60 & 61 & 62 & 63
+\\
+ 64 & 65 & 66 & 67 & 68 & 69 & 70 & 71 & 72 & 73 & 74 & 75 & 76 & 77 & 78 & 79
+& 80 & 81 & 82 & 83 & 84 & 85 & 86 & 87 & 88 & 89 & 90 & 91 & 92 & 93 & 94 & 95
+\\
+ 96 & 97 & 98 & 99 & 100 & 101 & 102 & 103 & 104 & 105 & 106 & 107 & 108 & 109
+& 110 & 111 & 112 & 113 & 114 & 115 & 116 & 117 & 118 & 119 & 120 & 121 & 122 &
+123 & 124 & 125 & 126 & 127 \\
+ 128 & 129 & 130 & 131 & 132 & 133 & 134 & 135 & 136 & 137 & 138 & 139 & 140 &
+141 & 142 & 143 & 144 & 145 & 146 & 147 & 148 & 149 & 150 & 151 & 152 & 153 &
+154 & 155 & 156 & 157 & 158 & 159 \\
+ 160 & 161 & 162 & 163 & 164 & 165 & 166 & 167 & 168 & 169 & 170 & 171 & 172 &
+173 & 174 & 175 & 176 & 177 & 178 & 179 & 180 & 181 & 182 & 183 & 184 & 185 &
+186 & 187 & 188 & 189 & 190 & 191 \\
+ 192 & 193 & 194 & 195 & 196 & 197 & 198 & 199 & 200 & 201 & 202 & 203 & 204 &
+205 & 206 & 207 & 208 & 209 & 210 & 211 & 212 & 213 & 214 & 215 & 216 & 217 &
+218 & 219 & 220 & 221 & 222 & 223 \\
+ 224 & 225 & 226 & 227 & 228 & 229 & 230 & 231 & 232 & 233 & 234 & 235 & 236 &
+237 & 238 & 239 & 240 & 241 & 242 & 243 & 244 & 245 & 246 & 247 & 248 & 249 &
+250 & 251 & 252 & 253 & 254 & 255 \\
+\end{array}
+\right)
+}
+\]
+    
+\section{Experimentación}
+
+\subsection{Método 1}
+
+Para el primer algoritmo de cifrado tenemos una matriz que contiene todos los
+valores del 0 al 255, que representan todos los valores posibles representables
+en un byte.
+
+\[
+\text{Bytes} := \Scale[0.5]{
+\left(
+\begin{array}{cccccccccccccccccccccccccccccccc}
+ 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 & 17
+& 18 & 19 & 20 & 21 & 22 & 23 & 24 & 25 & 26 & 27 & 28 & 29 & 30 & 31 \\
+ 32 & 33 & 34 & 35 & 36 & 37 & 38 & 39 & 40 & 41 & 42 & 43 & 44 & 45 & 46 & 47
+& 48 & 49 & 50 & 51 & 52 & 53 & 54 & 55 & 56 & 57 & 58 & 59 & 60 & 61 & 62 & 63
+\\
+ 64 & 65 & 66 & 67 & 68 & 69 & 70 & 71 & 72 & 73 & 74 & 75 & 76 & 77 & 78 & 79
+& 80 & 81 & 82 & 83 & 84 & 85 & 86 & 87 & 88 & 89 & 90 & 91 & 92 & 93 & 94 & 95
+\\
+ 96 & 97 & 98 & 99 & 100 & 101 & 102 & 103 & 104 & 105 & 106 & 107 & 108 & 109
+& 110 & 111 & 112 & 113 & 114 & 115 & 116 & 117 & 118 & 119 & 120 & 121 & 122 &
+123 & 124 & 125 & 126 & 127 \\
+ 128 & 129 & 130 & 131 & 132 & 133 & 134 & 135 & 136 & 137 & 138 & 139 & 140 &
+141 & 142 & 143 & 144 & 145 & 146 & 147 & 148 & 149 & 150 & 151 & 152 & 153 &
+154 & 155 & 156 & 157 & 158 & 159 \\
+ 160 & 161 & 162 & 163 & 164 & 165 & 166 & 167 & 168 & 169 & 170 & 171 & 172 &
+173 & 174 & 175 & 176 & 177 & 178 & 179 & 180 & 181 & 182 & 183 & 184 & 185 &
+186 & 187 & 188 & 189 & 190 & 191 \\
+ 192 & 193 & 194 & 195 & 196 & 197 & 198 & 199 & 200 & 201 & 202 & 203 & 204 &
+205 & 206 & 207 & 208 & 209 & 210 & 211 & 212 & 213 & 214 & 215 & 216 & 217 &
+218 & 219 & 220 & 221 & 222 & 223 \\
+ 224 & 225 & 226 & 227 & 228 & 229 & 230 & 231 & 232 & 233 & 234 & 235 & 236 &
+237 & 238 & 239 & 240 & 241 & 242 & 243 & 244 & 245 & 246 & 247 & 248 & 249 &
+250 & 251 & 252 & 253 & 254 & 255 \\
+\end{array}
+\right)
+}
+\]
+
+Para éste método, cambiaremos el orden de los valores aplicándole
+transformaciones a \texttt{Bytes}
+
+Sea $A^T$ una transformación que se le aplica a \texttt{Bytes}, $A^T$ debe
+seguir
+las siguientes reglas:
+
 \begin{enumerate}
-\item Hospital Metropolitano
-\item Los Angeles
-\item Ruiz Cortines
-\item Col. Moderna
-\item Metalúrgica
-\item Felix Gómez
-\item Col. Obrera
-\item Santa Lucia
-\item General I. Zaragoza
+    \item La transformación que afecte a $C_x$ también debe afectar a $C_y$,
+donde $y$ es igual a $m-(x-1)$\label{eq:cond1}, donde $m$ es el número de
+columnas (31) de \texttt{Bytes}
 \end{enumerate}
 
-\autocite{LineasMetro}
-
-\subsection{TransMetro}
-Es una alternativa ante la demanda del metrorrey y asi poder hacer un aruta que abarque las zonas con mayor tránsito. "El concepto de TransMetro consiste en operar un sistema de autobuses de alta calidad, denominado autobuses TransMetro, cuya característica principal es el estar equipado de manera similar al Metro en donde el usuario no distinguirá diferencias en la calidad del servicio que se le ofrece" (Sistema TransMetro, 2009-2015). La ventaja dee poder usar el trasnmetro es que el usario pueda realizar transbordos rapidamente al Metrorrey ya que estos estan unidos ademas de que es gratuito el transbordo que haces.
-
-\autocite{TEC1}
-
-\subsection{MetroEnlace}
-Esta opción es para los pasajeros que desean recorrer una mayor distancia por ejemplo a distintas ciudades, conecta las ciudades de Cadereyta, Ciénega de Flores, Montemorelos y Linares con las dos estaciones de enlace con la red de Metro, es decir las estaciones Exposición y Cuauhtémoc. 
-Alvarado, M. D. P. A., \& ALVARADO, M. D. P. A. (2012). Estudio de caso sobre el impacto en la ejecución del programa de transporte masivo (PROTRAM) en las grandes ciudades: caso comparativo del sistema Metrobús del Distrito Federal con el corredor vial BRT en la ciudad de Monterrey.
-
-\autocite{Manchester}
-
-
-\section{Carreteras y automóviles}
-El total  de autos registrados en  el área metropolitana de Monterrey en 2017  es 1,248,005 automoviles con un senso que nos indica que por  cada 3 habitantes de está área tienen al menos 1 automovil.
-\autocite{SCT}
+Si \eqref{eq:cond1} no se cumple, obtenemos pérdidas de información que hacen
+imposible el descifrado del \textit{cyphertext}
 
 \begin{figure}[H]
     \centering
-
-    \caption{Imagen de las cerreteras disponibles en Nuevo Léon.\\\autocite{SCT}}
-    \label{fig:Carreteras}
+    \includegraphics[width=\textwidth]{gr3d.pdf}
+    \caption{Visualización de los bytes del archivo
+original. $M$}
+    \label{fig:DatosOrigM1}
 \end{figure}
-
-\subsection{Red Federal Libre}
-\begin{enumerate}
-\item Cadereyta de Jiménez - Allende MEX-009 
-\item Ciudad Victoria - Monterrey MEX-085
-\item La Unión - El Encadenado MEX 
-\item Libramiento de China MEX-040 
-\end{enumerate}
-\autocite{SCT}
-
-\section{Accidentes automovilísticos}
-
-
-
-\noindent\begin{minipage}{0.5\textwidth}% adapt widths of minipages to your needs
-\begin{figure}[H]
-    \centering
-
-    \caption{Gráfico de comparación de número de\\accidentes en Monterrey en el período 2006-2020\\respecto al total en toda la República Mexicana\\\autocite{DatosInegiDeVerdad}}
-    \label{fig:Aporte}
-\end{figure}
-\end{minipage}%
-\hfill%
-\begin{minipage}{0.5\textwidth}
-Según los datos de la INEGI, disponibles en una base de datos abierta titulada \textit{Accidentes de tránsito terreste en zonas urbanas y suburbanas}, del total de 6,002,135 de accidentes ocurridos en la República Mexicana entre el año 2006 y 2020, el 18.19\% de los accidentes ocurrieron en Nuevo León, donde del 100\% de accidentes, el 37.54\% de accidentes provienen solo del muicipio de Monterrey, dando como resultado que de los 6,002,135 de siniestros, 409,999 han ocurrido solo en el municipio de Monterrey. 
-
-\hspace{0pt}\\
-En la Figura \ref{fig:Aporte} se ve de manera gráfica el gran aporte que representa la cifra de accidentes automovilísticos solo en Monterrey al total de los accidentes ocurridos en el período del 2006 al año 2020. 
-
-\autocite{DatosInegiDeVerdad}
-\end{minipage}
-
-\hspace{0pt}\\
-El total de accidentes de Nuevo Léon en el período mencionado se puede observar en la Figura \ref{fig:Acc}, dónde se desgloza por años, mostrando tanto la cantidad total de accidentes en el Estado (azul) como la cantidad de accidentes registradas solo en el municipio de Monterrey (amarillo).
 
 \begin{figure}[H]
     \centering
-
-    \caption{Accidentes por año en el período de 2006-2020\\\autocite{DatosInegiDeVerdad}}
-    \label{fig:Acc}
+    \includegraphics[width=\textwidth]{bytes2.png}
+    \caption{Visualización de los bytes del archivo
+cifrado. $N$}
+    \label{fig:DatosOrigM2}
 \end{figure}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{bytes3.png}
+    \caption{$M-N$}
+    \label{fig:DatosOrigM3}
+\end{figure}
 
-\section{Planteamiento del problema.}
+La mayor vulnerabilidad que presenta éste método de cifrado es que la
+frecuencia de bytes presentes es exáctamente la misma, al final, no estamos
+sacrificando ninguna pérdida de información y por lo tanto solo sustituimos los
+valores.
 
-Los datos previos, después de ser analizados, permiten concluir que Monterrey tiene un problema de movilidad.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{historygram.png}
+    \caption{Histograma de los bytes del archivo
+original y el cifrado.}
+    \label{fig:Histo1}
+\end{figure}
 
-Todas las zonas conurbadas tienen que moverse a la metropolitana,  donde, tan solo sus residentes, tienen por cada 3 un vehículo, lo que representa una gran concentración de vehículos en un espacio reducido.
-
-En 2017 se reportaron 5,784,442 de habitantes registrados con 1,248,005 repartidos entre los mismos. Con el gran crecimiento de la población el número de vehículos en circulación también aumenta. 
-
-Es notable como con el aumento de personas no aumentaron los medios de transporte público o las carreteras, causando más densidad de vehículos en las carreteras y autopistas de la ciudad, hecho que peude explicar por qué el 72\% de los accidentes es provocado por vehículos.
-
-El metrobús, que estaba planeado fuera subterráneo en 1987 y que fue modificado para ajustarse al presupuesto, gasta un carril de las avenidas, cosa que no fuera contraproducente si la gente usara el servicio, pero a pesar de que está disponible, no se ha disminuido el número de personas que usen el auto, o al menos no al ritmo al que crece la ciudad. 
-
-Haciendo un análisis preciso de los datos, pretendemos encontrar una solución que ayude a mitigar los problemas con los accidentes viales terrestres ocurridos en Monterrey y alrededores.
+En la figura \ref{fig:Histo1}, se muestra la sobreposición de los histogramas
+de bytes del documento antes y después de cifrado. Ambos son idénticos. Si el
+documento está escrito en Ingés, o en contiene las instrucciones de cierta
+arquitectura, y se conoce la frecuencia de bytes, el mensaje puede ser
+descifrado.
 
 
 \printbibliography
 
-Gráficos realizados en Mathematica 12.3.1.0 con datos del Instituto Nacional de Estadística y Geografía (INEGI).
+\newpage
+
+\appendix
+
+\section*{Appendix A}
+
+Comparación de histograma de las ocurrencias de bytes entre un arreglo de bytes
+y su versión cifrada por el \texttt{Método 1}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.7]{historygramorig.png}
+    \caption*{Histograma de los bytes del archivo
+original y el cifrado.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.7]{historygramorig2.png}
+    \caption*{Histograma de los bytes del archivo cifrado.}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.7]{historygram.png}
+    \caption*{Histograma de los bytes del archivo
+original y el cifrado.}
+\end{figure}
+
+Graficas elaboradas en Mathematica 13 con el código:
+
+\begin{minted}[linenos]{wolfram}
+Show[
+    With[
+        {
+            assoc = CountRepetitions[baa],
+            assoc2 = CountRepetitions[Flatten[bx]]
+        },
+        
+        ListLinePlot[
+            {
+                KeyValueMap[Log[#2] &]@KeySortBy[assoc, assoc[#] &],
+                KeyValueMap[Log[#2] &]@KeySortBy[assoc2, assoc2[#] &]
+            },
+            Filling -> Axis,
+            PlotRange -> Full,
+            ImageSize -> Large
+        ]
+    ]
+]
+\end{minted}
+
+donde \texttt{baa} es un arreglo de bytes conteniendo el estado del archivo
+original y donde \texttt{bx} es una matriz que se usa como arreglo de bytes que
+contiene el estado cifrado de los contenidos de donde \texttt{baa}.
+
 \end{document}
