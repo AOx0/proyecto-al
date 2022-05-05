@@ -6,8 +6,6 @@
 style=apa,
 ]{biblatex}
 
-
-
 \defbibenvironment{bibliography}
   {\enumerate
      {}
@@ -54,7 +52,7 @@ style=apa,
     {\large Facultad de Ingeniería}\\
     \quad\\
     \quad\\
-    \includegraphics[scale=0.3]{UP.png}
+    \includegraphics[scale=0.3]{UP}
     \quad\\
     \quad\\
     Álgebra Lineal\\
@@ -64,7 +62,7 @@ style=apa,
     \begin{tabular}{c|c}
         Osornio López Daniel Alejandro & 0244685\\
         Paredes García Ricardo & 0241528\\
-        Nombre nombre nombre nombre & idididid\\
+        Rodrigo Peña Díaz Barriga & idididid\\
     \end{tabular}\\
     \quad\\
     \quad\\
@@ -93,7 +91,7 @@ El objetivo de este proyecto es utilizar transformaciones lineales como llaves
 para cifrar y descifrar bits de información.
 Se explora el uso de la aritmética modular para mantener la congruencia de la
 información
- a la vez que se  experimenta con distintos métodos de cifrado por medio de
+ a la vez que se experimenta con distintos métodos de cifrado por medio de
 algoritmos varios que emplean las transformaciones en su proceso.
 La meta es implementar una herramienta de cifrado y descifrado que pueda
 proteger tanto archivos de texto como ejecutables con un procedimiento
@@ -102,7 +100,7 @@ obtener mayor seguridad.
 
 Los métodos estudiados son dos. 
 
-El primero, es una modificación de un cifrado de sustitución. Primero se
+El primero es una modificación de un cifrado de sustitución. Primero se
 construye una matriz que contiene todos los valores representables en un 
 byte y modifica la matriz por medio de multiplicaciones matriciales para
 después sustituir cada byte en el archivo por su nuevo valor. 
@@ -111,10 +109,10 @@ El segundo, ordena todos los bytes del mensaje a cifrar, como puede ser un
 archivo, y le aplica una multiplicación matricial a la totalidad del archivo. 
 
 Para dar soporte al auto-descifrado de los archivos, cuando se utilice la
-bandera --auto, se almacenan en el archivo los valores para descifrarse a si
+bandera --auto, se almacenan en el archivo los valores para descifrarse a sí
 mismo, 
 con bytes de meta información que facilitan el proceso y permiten una mayor
-seguridad lograda por el factor aleatorio.Este proyecto plantea la
+seguridad lograda por el factor aleatorio. Este proyecto plantea la
 implementación 
 de una librería de cifrado de archivos por medio de una ofuscación binaria
 lograda por transformaciones.
@@ -135,22 +133,22 @@ necesarios para llegar a dicho procedimiento y los patrones que contiene para
 analizar si es posible su cifrado de forma sencilla.
 
 Una vez tengamos listo el algoritmo, implementaremos una librería de uso
-general para el cifrado de arreglos de bytes usando el lenguaje de programación
-Rust. Decidimos emplear este lenguaje debido a la facilidad que tiene en su
-sintaxis sumado con las operaciones de bajo nivel que permite realizar con la
+general para el cifrado de arreglos de bytes utilizando el lenguaje de programación
+Rust. Decidimos emplearlo debido a la facilidad que tiene en su
+sintaxis sumada con las operaciones de bajo nivel que permite realizar con la
 computadora sin necesidad de producir código complejo como pasaría con
 C/C++.
 
 Verificaremos que la librería es estable y arroja como resultado el archivo
-exacto que se tenía antes de ser cifrado. Una ventaja de analizar los archivos
+exacto que se tenía antes de ser cifrado. Una ventaja de analizarlos
 como arreglos de bytes, es que da igual el \textit{encoding} con el que cuente
 el mismo, por lo que la librería es amigable con ejecutables, imágenes, etc.
 
 La librería contará con el soporte para cifrar ejecutables, ofreciendo una
-manera de que se auto-descifren sin exponer de forma explícita la manera en que
+manera de que se autodescifren sin exponer de manera explícita la manera en que
 lo hacen. 
 
-Por último, utilizaremos la librería para programar una aplicación de la linea
+Por último, usaremos la librería para programar una aplicación de la línea
 de comandos que cifra archivos de todo tipo.
 
 Este es un tema altamente experimental, por lo que se espera encontrar
@@ -163,7 +161,7 @@ limitaciones en el camino.
 Todo en las computadoras es representado por los valores 0 y 1 debido a que
 funcionan con el estado o no de un componente, con la presencia o no de
 energía.
-A una unidad que puede valer verdadero (1) o falso (0) se le conoce como bit.
+A una unidad que puede valer verdadero (1) o falso (0) s le conoce como bit.
 Los bits son la unidad más pequeña de información en las ciencias de la
 computación.
 
@@ -182,7 +180,7 @@ se interpretan como números binarios no firmados. Efectivamente, formando 256
 combinaciones diferentes.
 
 Las computadoras entienden la información de distinta forma a los humanos.
-Estas interpretan bytes que resultan en instrucciones para el CPU; en
+Estas interpretan bytes que resultan en instrucciones para la CPU; en
 caracteres de 
 un archivo de texto, en piezas para armar una imagen, en direcciones de memoria
 y en cualquier dato que se procese, almacene o ejecute en las mismas.
@@ -192,7 +190,7 @@ tiene su CPU, su unidad central de procesamiento.
 Cada una cuenta con instrucciones distintas, como son los procesadores Intel o
 Ryzen.
 
-La forma en que se moldearon las compuertas lógicas dentro de un procesador
+La manera en que se moldearon las compuertas lógicas dentro de un procesador
 hará que el valor, por poner un ejemplo, 47 sea el que 
 indique a la máquina que realizara una suma y que por ende debe tomar los
 siguientes dos valores para sumarlos.
@@ -209,16 +207,16 @@ Por ello es necesario proteger la información, desde archivos de texto como
 \Scale[0.5]{
 \left(
 \begin{array}{ccccccccc}
- 0 & 1 & 2 & ... & 29 & 30 & 31 \\
- 32 & 33 & 34 & ... & 61 & 62 & 63
+ 0 & 1 & 2 & \dots & 29 & 30 & 31 \\
+ 32 & 33 & 34 & \dots & 61 & 62 & 63
 \\
- 64 & 65 & 66 & ... & 93 & 94 & 95
+ 64 & 65 & 66 & \dots & 93 & 94 & 95
 \\
- 96 & 97 & 98 & ... & 125 & 126 & 127 \\
- 128 & 129 & 130 & ... & 157 & 158 & 159 \\
- 160 & 161 & 162 & ... & 189 & 190 & 191 \\
- 192 & 193 & 194 & ... & 221 & 222 & 223 \\
- 224 & 225 & 226 & ... & 253 & 254 & 255 \\
+ 96 & 97 & 98 & \dots & 125 & 126 & 127 \\
+ 128 & 129 & 130 & \dots & 157 & 158 & 159 \\
+ 160 & 161 & 162 & \dots & 189 & 190 & 191 \\
+ 192 & 193 & 194 & \dots & 221 & 222 & 223 \\
+ 224 & 225 & 226 & \dots & 253 & 254 & 255 \\
 \end{array}
 \right)
 }
@@ -296,7 +294,7 @@ en un byte.
 }
 \]
 
-Para éste método, cambiaremos el orden de los valores aplicándole
+P Ara este método, cambiaremos el orden de los valores aplicándole
 transformaciones a \texttt{Bytes}
 
 Sea $A^T$ una transformación que se le aplica a \texttt{Bytes}, $A^T$ debe
@@ -310,11 +308,11 @@ columnas (31) de \texttt{Bytes}
 \end{enumerate}
 
 Si \eqref{eq:cond1} no se cumple, obtenemos pérdidas de información que hacen
-imposible el descifrado del \textit{cyphertext}
+imposible el descifrado del \textit{ciphertext}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{gr3d.pdf}
+    \includegraphics[width=\textwidth]{gr3d}
     \caption{Visualización de los bytes del archivo
 original. $M$}
     \label{fig:DatosOrigM1}
@@ -322,7 +320,7 @@ original. $M$}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{bytes2.png}
+    \includegraphics[width=\textwidth]{bytes2}
     \caption{Visualización de los bytes del archivo
 cifrado. $N$}
     \label{fig:DatosOrigM2}
@@ -330,14 +328,14 @@ cifrado. $N$}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{bytes3.png}
+    \includegraphics[width=\textwidth]{bytes3}
     \caption{$M-N$}
     \label{fig:DatosOrigM3}
 \end{figure}
 
-La mayor vulnerabilidad que presenta éste método de cifrado es que la
-frecuencia de bytes presentes es exáctamente la misma, al final, no estamos
-sacrificando ninguna pérdida de información y por lo tanto solo sustituimos los
+La mayor vulnerabilidad que presenta este método de cifrado es que la
+frecuencia de bytes presentes es la misma debido a que no estamos
+sacrificando ninguna pérdida de información y, por lo tanto, solo sustituimos los
 valores.
 
 \begin{figure}[H]
@@ -348,9 +346,9 @@ original y el cifrado.}
     \label{fig:Histo1}
 \end{figure}
 
-En la figura \ref{fig:Histo1}, se muestra la sobreposición de los histogramas
+E N la figura \ref{fig:Histo1}, se muestra la sobre posición de los histogramas
 de bytes del documento antes y después de cifrado. Ambos son idénticos. Si el
-documento está escrito en Ingés, o en contiene las instrucciones de cierta
+documento está escrito en Inglés o contuviera las instrucciones de cierta
 arquitectura, y se conoce la frecuencia de bytes, el mensaje puede ser
 descifrado.
 
@@ -368,22 +366,23 @@ y su versión cifrada por el \texttt{Método 1}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{historygramorig.png}
+    \includegraphics[scale=0.7]{historygramorig}
     \caption*{Histograma de los bytes del archivo
-original y el cifrado.}
+original y el cifrado.}\label{fig:d1}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{historygramorig2.png}
+    \includegraphics[scale=0.7]{historygramorig2}
     \caption*{Histograma de los bytes del archivo cifrado.}
+    \label{fig:d3}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{historygram.png}
+    \includegraphics[scale=0.7]{historygram}
     \caption*{Histograma de los bytes del archivo
-original y el cifrado.}
+original y el cifrado.}\label{fig:d2}
 \end{figure}
 
 Graficas elaboradas en Mathematica 13 con el código:

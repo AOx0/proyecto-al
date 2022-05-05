@@ -9,3 +9,6 @@ test.blg
 test.log
 test.run.xml
 test.synctex.gz
+/test.synctex(busy)
+/out
+tmp/

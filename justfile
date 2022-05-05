@@ -1,7 +1,7 @@
 build_remote: && open
-    cd .. && scp -r proyecto kali:~
+    cd .. && rsync -azP proyecto kali:~ --exclude=".git" --exclude="test.pdf" --exclude="out"
     ssh kali  "pwd && cd ~/proyecto && just build 1 1 && exit"
-    cd .. && scp kali:~/proyecto/test.pdf proyecto
+    cd .. && rsync -azP kali:~/proyecto/test.pdf proyecto
     
 open:
     qil Preview
@@ -15,6 +15,5 @@ build stage="1" mac="0":
     {{if stage == "1" { "rm -rf test.aux test.bbl test.bcf test.blg test.log test.run.xml test.synctex.gz" } else { "echo 'Skipping'" } }}
     {{if mac == "0" { "qil Preview; open test.pdf -a Preview" } else { "echo 'Skipping'" } }}
 
-    
 pre_stage:
     just build 0 1 
