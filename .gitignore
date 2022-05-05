@@ -12,3 +12,4 @@ test.synctex.gz
 /test.synctex(busy)
 /out
 tmp/
+/.idea/
