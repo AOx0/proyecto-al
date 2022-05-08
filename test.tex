@@ -6,6 +6,11 @@
 style=apa,
 ]{biblatex}
 
+\newcommand\invisiblesection[1]{%
+  \refstepcounter{section}%
+  \addcontentsline{toc}{section}{\protect\numberline{\thesection}#1}%
+  \sectionmark{#1}}
+
 \defbibenvironment{bibliography}
   {\enumerate
      {}
@@ -25,9 +30,18 @@ style=apa,
 \usepackage{parskip} % Package to tweak paragraph skipping
 \usepackage{tikz} % Package for drawing
 \usepackage{amsmath}
+\usepackage{amssymb} % Para usar \mathbb
 \usepackage{csquotes}
 
+\usepackage{outlines} % Para enumerar con multiples niveles
+
 \usepackage{graphicx} % Para instertar pdfs como imágenes y usar \scalebox
+
+% Paraa induces:
+
+\usepackage{imakeidx}
+\makeindex[columns=3, title=Alphabetical Index, intoc]
+
 
 \newcommand*{\Scale}[2][4]{\scalebox{#1}{$#2$}}%
 \newcommand*{\Resize}[2]{\resizebox{#1}{!}{$#2$}}%
@@ -39,12 +53,17 @@ style=apa,
 \renewcommand{\tablename}{Tabla}
 \renewcommand\listingscaption{Listado}
 
+\setlength{\parskip}{\baselineskip}%
+\setlength{\parindent}{0pt}%
+
 
 \addbibresource{bibliography.bib}
 \begin{document}
 
 \hspace{0pt}
 \vfill
+
+\invisiblesection{Portada}
 
 \begin{center}
     {\huge Aplicación del Álgebra Lineal:\\Ofuscación binaria}\\    \quad\\
@@ -60,17 +79,20 @@ style=apa,
     \quad\\
     \quad\\
     \begin{tabular}{c|c}
+        Díaz Barriga Rodrigo Peña & 0249221\\
         Osornio López Daniel Alejandro & 0244685\\
-        Paredes García Ricardo & 0241528\\
-        Rodrigo Peña Díaz Barriga & idididid\\
+        Paredes García Ricardo & 0241528
     \end{tabular}\\
     \quad\\
     \quad\\
 \end{center}
 
 \vfill
-\newpage
 
+\newpage
+\tableofcontents
+
+\newpage
 \section{Objetivos}
 
 1. Diseño de un algoritmo de cifrado que utilice como herramienta principal el
@@ -78,7 +100,7 @@ style=apa,
 
 2. Creación de un ejecutable de ofuscación de archivos
 
-\quad 2.1. Implementación de una librería de cifrado de archivos en Rust
+\quad 2.1. Implementación de un script de cifrado de archivos con Mathematica
 
 \quad 2.2. Empleo de libreria para la ofuscación de archivos binarios y de
 texto
@@ -118,7 +140,6 @@ de una librería de cifrado de archivos por medio de una ofuscación binaria
 lograda por transformaciones.
 
 \newpage
-
 \section{Introducción}
 
 Como estudiantes de la carrera de Inteligencia de Datos y Ciberseguridad,
@@ -128,13 +149,23 @@ encargue de cifrar archivos de todo tipo, modificando los bytes del mismo por
 los que una transformación lineal dicte.
 
 Antes de empezar a programar nada, desarrollaremos el algoritmo de cifrado que
-emplearemos haciendo uso de Mathematica 13; describiremos los conceptos
+emplearemos; describiremos los conceptos
 necesarios para llegar a dicho procedimiento y los patrones que contiene para
 analizar si es posible su cifrado de forma sencilla.
 
-Una vez tengamos listo el algoritmo, implementaremos una librería de uso
-general para el cifrado de arreglos de bytes utilizando el lenguaje de programación
-Rust. Decidimos emplearlo debido a la facilidad que tiene en su
+Una vez tengamos listo el algoritmo, implementaremos un script de uso
+general para el cifrado de arreglos de bytes utilizando el lenguaje de programación Rust
+\iffalse
+Wolfram Mathematica. 
+
+Decidimos emplearlo debido a la facilidad que tiene en su programación, manejo de datos, de matrices
+y la facilidad que tiene para interactuar con el sistema con una gran riqueza de
+funciones matemáticas disponibles para obtener resultados con gran velocidad además
+de ofrecernos la realización de material gráfico agradable y sencillo de repoducir
+para ilustrar nuestra experimentación y resultados.
+\fi
+
+Decidimos emplearlo debido a la facilidad que tiene en su
 sintaxis sumada con las operaciones de bajo nivel que permite realizar con la
 computadora sin necesidad de producir código complejo como pasaría con
 C/C++.
@@ -155,17 +186,54 @@ Este es un tema altamente experimental, por lo que se espera encontrar
 limitaciones en el camino.
 
 \newpage
-
 \section{Marco Teórico}
 
+\subsection{Transformaciones}
+En las matemáticas, una transformación puede ser toda función que mapea un conjunto X en otro conjunto o sobre sí mismo.
+
+En algunos casos el conjunto X posee alguna estructura algebraica o geométrica y el término de “transformación” se esta refiriendo a una función X que va a conserva dicha estructura.
+
+Algunos ejemplos de transformaciones geométricas pueden ser transformaciones lineales,  transformaciones afines, rotaciones, reflexiones o traslaciones. Estas sueles realizar en un espacio euclidiano, en donde la mayoría de las veces suelen ser en $\mathbb{R}^2$ (dos dimensiones) y $\mathbb{R}^3$ (tres dimensiones).
+
+Son operaciones en donde se pone en práctica la álgebra lineal y ser descritas de manera explícita utilizando matrices.
+
+\subsubsection{Transformaciones lineales}
+Son funciones en donde se usa la álgebra lineal, y el objetivo que tiene una transformación lineal es el poder transformar de un espacio a otro.
+Para que se pueda considerar como transformación lineal debe de cumplir con dos condiciones:
+\begin{enumerate}
+    \item T (v + w) = T (v) + T (w)
+    \item Multiplicación de un escalar por un vector: $T (cv) = c \times T (v)$
+\end{enumerate}
+
+
+\subsubsection{Matriz asociada}
+Para toda transformación lineal va a existir una matriz asociada de tal manera que para T(v) = Av para toda v en V.
+Lo que indica el teorema es que cada vez que se tome una base diferente para los espacios vectoriales de una transformación lineal se va a tener una representación matricial diferente.
+
+\subsubsection{Matriz inversa}
+El producto de una matriz por su inversa va a ser igual a la matriz identidad. Se puede calcular la inversa por el método de Guass, pero al que tener en cuanta que para poderlo calcular debe de ser cuadrada la matriz, ya que si no lo hace no se va a poder calcular.
+
+\subsection{Computadoras}
+
+\subsubsection{Bit}
 Todo en las computadoras es representado por los valores 0 y 1 debido a que
 funcionan con el estado o no de un componente, con la presencia o no de
 energía.
+
 A una unidad que puede valer verdadero (1) o falso (0) s le conoce como bit.
 Los bits son la unidad más pequeña de información en las ciencias de la
 computación.
 
+El bit es un acrónimo de \textit{Binary digit} lo cual se traduce como “dígito binario” el cual suele identificarse como “b”. De acuerdo con la definición de bit es un dígito del sistema de numeración binaria, que son representados ya sea que se representa con el 0 o 1.
+
+\autocite{BIT}
+
+\subsubsection{Byte}
 A un grupo de 8 bits se les agrupa. A esta agrupación se le conoce como byte.
+
+Es la unidad estándar de información en la informática. Al momento de poder identificar la unidad en la mayoría de ocasiones se suele identificar como “B” pues todavía no existe un símbolo. Al ser un conjunto de 8 bits también se suele llamar como octeto.
+
+\autocite{BYTE}
 
 Un byte puede contener $2^8$ combinaciones distintas de bits. Por ejemplo:
 
@@ -178,6 +246,8 @@ Un byte puede contener $2^8$ combinaciones distintas de bits. Por ejemplo:
 Los bits en un byte pueden representar cualquier cantidad entre el 0 al 255 si
 se interpretan como números binarios no firmados. Efectivamente, formando 256
 combinaciones diferentes.
+
+\subsubsection{CPU}
 
 Las computadoras entienden la información de distinta forma a los humanos.
 Estas interpretan bytes que resultan en instrucciones para la CPU; en
@@ -202,68 +272,90 @@ ella.
 
 Por ello es necesario proteger la información, desde archivos de texto como
 
+\subsubsection{Como funciona un archivo}
+
+Un archivo o también conocido como fichero es un conjunto de unidades de bits almacenados en un dispositivo. Cada archivo se compone de un nombre, un punto y una extensión que va ser el encargado de determinar el tipo de archivo que va ser y sus funciones que debe de cumplir. 
+
+
+Dentro de los archivos existen paquetes pequeños de datos expresados en bits y los cuales se ordenan en registros o en líneas, siendo distintos, pero con algún rasgo en común.
+
+Cabe mencionar que el modo de agrupación depende de quien haga el archivo, por lo que existen varias estructuras de archivos, desde más simples hasta más complejas.
+
+Los archivos pueden tener distintas funciones ya sean contener información como es el caso de los archivos de textos, hasta crear archivos ejecutables que desencadenan ciertas secuencias de acciones que tiene como resultado una acción concreta.
+
+
+Desde apagar la computadora hasta el iniciar algún videojuego, todo eso funciona a través de archivos interconectados ejecutándose por turno en memoria del computador.
+
+\autocite{ARCHIVO}
+
+\subsubsection{Álgebra modular}
+
+En el álgebra modular los valores que se emplean siguen un ciclo infinito \textit{redondo} desde al 0 hasta un número conocido como \textbf{módulo}. Se usa como sistema de equivalencias, también llamado aritmética de reloj o de anillo ya que los números \textit{dan la vuelta} tras alcanzar el módulo.
+
+\autocite{wikimod}
+
+Un ejemplo, tal como una de sus denominaciones informales, son las horas que maneja el reloj. En ella tenemos un valor máximo de 12 y uno mínimo de 1.
+
+Matemáticamente podemos representar el conjunto de los valores posibles del reloj como:
 
 \[
-\Scale[0.5]{
-\left(
-\begin{array}{ccccccccc}
- 0 & 1 & 2 & \dots & 29 & 30 & 31 \\
- 32 & 33 & 34 & \dots & 61 & 62 & 63
-\\
- 64 & 65 & 66 & \dots & 93 & 94 & 95
-\\
- 96 & 97 & 98 & \dots & 125 & 126 & 127 \\
- 128 & 129 & 130 & \dots & 157 & 158 & 159 \\
- 160 & 161 & 162 & \dots & 189 & 190 & 191 \\
- 192 & 193 & 194 & \dots & 221 & 222 & 223 \\
- 224 & 225 & 226 & \dots & 253 & 254 & 255 \\
-\end{array}
-\right)
-}
+\{x | x \text{ (mod }12\text{)} + 1\}
 \]
 
-\[
-\Scale[0.5]{
-\left(
-\begin{array}{cccccccccccccccccccccccccccccccc}
- 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 & 17
-& 18 & 19 & 20 & 21 & 22 & 23 & 24 & 25 & 26 & 27 & 28 & 29 & 30 & 31 \\
- 32 & 33 & 34 & 35 & 36 & 37 & 38 & 39 & 40 & 41 & 42 & 43 & 44 & 45 & 46 & 47
-& 48 & 49 & 50 & 51 & 52 & 53 & 54 & 55 & 56 & 57 & 58 & 59 & 60 & 61 & 62 & 63
-\\
- 64 & 65 & 66 & 67 & 68 & 69 & 70 & 71 & 72 & 73 & 74 & 75 & 76 & 77 & 78 & 79
-& 80 & 81 & 82 & 83 & 84 & 85 & 86 & 87 & 88 & 89 & 90 & 91 & 92 & 93 & 94 & 95
-\\
- 96 & 97 & 98 & 99 & 100 & 101 & 102 & 103 & 104 & 105 & 106 & 107 & 108 & 109
-& 110 & 111 & 112 & 113 & 114 & 115 & 116 & 117 & 118 & 119 & 120 & 121 & 122 &
-123 & 124 & 125 & 126 & 127 \\
- 128 & 129 & 130 & 131 & 132 & 133 & 134 & 135 & 136 & 137 & 138 & 139 & 140 &
-141 & 142 & 143 & 144 & 145 & 146 & 147 & 148 & 149 & 150 & 151 & 152 & 153 &
-154 & 155 & 156 & 157 & 158 & 159 \\
- 160 & 161 & 162 & 163 & 164 & 165 & 166 & 167 & 168 & 169 & 170 & 171 & 172 &
-173 & 174 & 175 & 176 & 177 & 178 & 179 & 180 & 181 & 182 & 183 & 184 & 185 &
-186 & 187 & 188 & 189 & 190 & 191 \\
- 192 & 193 & 194 & 195 & 196 & 197 & 198 & 199 & 200 & 201 & 202 & 203 & 204 &
-205 & 206 & 207 & 208 & 209 & 210 & 211 & 212 & 213 & 214 & 215 & 216 & 217 &
-218 & 219 & 220 & 221 & 222 & 223 \\
- 224 & 225 & 226 & 227 & 228 & 229 & 230 & 231 & 232 & 233 & 234 & 235 & 236 &
-237 & 238 & 239 & 240 & 241 & 242 & 243 & 244 & 245 & 246 & 247 & 248 & 249 &
-250 & 251 & 252 & 253 & 254 & 255 \\
-\end{array}
-\right)
-}
-\]
+El cual es un conjunto que se construye de los valores $\{0,1,2,3,4,5,6,7,8,9,10,11\}$ obtenidos con la operación $(\text{mod} 12)$ y a dicho resultado sumarle una unidad.
 
+\subsubsection{Módulo}
+
+\textbf{Definición 1.} Sea módulo ($m$) un número entero tal que $m > 1$. Decimos que dos enteros $a$ y $b$ son congruentes entre sí módulo $m$ (congruente “$\text{ (mod }m\text{)}$” para abreviar). Escribimos
+\[a \equiv b \text{ (mod }m\text{)},\]
+para hacer saber que la diferencia $a - b$ es un múltiplo entero de $m$. En otras palabras, $a \equiv b \text{ (mod }m\text{)}$ cuando $a = b + k \times m$ para algún número entero $k$ (positivo, negativo o cero).
+
+\textbf{Definición 2.} Sea $m$ un entero con $m > 1$. Para un entero arbitrario $a$, el residuo de un módulo $m$ es el único entero $r$ entre $0,1,...,m-1$ con el que a es congruente módulo $m$.
+
+\autocite{hill}
+
+En la programación hay un operador llamado módulo representado como \texttt{\%}, que puede causar confusión.
+
+El operador se encarga de devolver el residuo de una operación sin importar si el número es negativo, positivo o 0. El problema radica en que se rompe con la definición 2 puesto que algunos lenguajes de programación suelen devolver valores negativos cuando se realiza la operación \texttt{a \% m}
+
+De modo en que, en Rust, el siguiente ejemplo no es equivalente a $-1 \equiv b \text{ (mod }m\text{)}$
+
+\begin{minted}{rust}
+let b: int = -1 % m 
+\end{minted}
+
+Pero en Python el siguiente ejemplo si es equivalente a la misma expresión.
+
+\begin{minted}{python}
+b = -1 % m 
+\end{minted}
+
+Para poder obtener el comportamiento deseado se debe usar otro método con Rust. Es obligación de cada programador entender el funcionamiento de sus operadores para evitar cometer errores.
+
+El siguiente código en Rust si se conforma con las dos definiciones dadas:
+
+\begin{minted}{rust}
+let b: int = (-1).rem_euclid(m)
+\end{minted}
+
+\newpage
+\section{Aplicación Posible}
+
+En este caso se decidió aplicarlo en la descifraron de un archivo con el propósito de proteger la información de las personas, ya que es un problema sumamente preocupante pues según Kaspersky en México ocurren aproximadamente 300 ataques por minute, en los cuales en la mayoría de las ocasiones llegan a penetrar la seguridad. 
+
+Otro posible caso de su aplicación que se puede hacer al algebra lineal es el de reconocimiento de imágenes, el cual también es importante porque enseñas a una maquina a reconocer objetos y esto nos puede servir en el caso de que quieres enseñar a un vehículo autónomo a que vaya reconociendo objetos y así vayan siendo mas seguros tanto para el pasajero como para los peatones.
+
+\newpage
 \section{Experimentación}
 
 \subsection{Método 1}
 
+\subsubsection{Cifrado}
 Para el primer algoritmo de cifrado tenemos una matriz que contiene todos los
-valores del 0 al 255, que representan todos los valores posibles representables
-en un byte.
+valores del 0 al 255, que representan todos los valores posibles representables por un byte de información.
 
 \[
-\text{Bytes} := \Scale[0.5]{
+\text{Bytes} := \Scale[0.4]{
 \left(
 \begin{array}{cccccccccccccccccccccccccccccccc}
  0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 & 17
@@ -294,8 +386,10 @@ en un byte.
 }
 \]
 
-P Ara este método, cambiaremos el orden de los valores aplicándole
-transformaciones a \texttt{Bytes}
+Para este método, cambiaremos el orden de los valores aplicándole
+transformaciones a \texttt{Bytes}. La clave para que se pueda descifrar el mensaje y almacenar en un archivo es no perder ni una variante del valor que representa un byte. 
+
+Para lograrlo podemos intercambiar los valores, por fila o columna aplicando transformaciones.
 
 Sea $A^T$ una transformación que se le aplica a \texttt{Bytes}, $A^T$ debe
 seguir
@@ -303,12 +397,379 @@ las siguientes reglas:
 
 \begin{enumerate}
     \item La transformación que afecte a $C_x$ también debe afectar a $C_y$,
-donde $y$ es igual a $m-(x-1)$\label{eq:cond1}, donde $m$ es el número de
-columnas (31) de \texttt{Bytes}
+donde $y$ es igual a $c-(x-1)$\label{eq:cond1}, donde $c$ es el número de
+columnas (31, contando desde 0) de la matriz identidad de \texttt{Bytes}
+    \item La matriz asociada de la transformación debe ser cuadrada, de 32x32, para que sea posible
+obtener su matriz inversa y poder descifrar el mensaje
+    \item No se puede afectar a $C_1$, porque la forma en que el 0 se comporta con la aritmética modular no nos favorece
+    \item A toda transformación que multiplique un escalar tal que $a \neq 1$, se debe aplicar el álgebra modular para obtener un número congruente $b (\text{mod} m)$ 
 \end{enumerate}
 
 Si \eqref{eq:cond1} no se cumple, obtenemos pérdidas de información que hacen
 imposible el descifrado del \textit{ciphertext}
+
+Podemos intercambiar filas aplicando una transformación.
+
+Sea
+
+ \[
+\text{T}_1 \Scale[1]{
+\left(
+    \begin{array}{ccccc}
+        x_0 & x_1 & x_2 & x_3 & x_4\\
+        x_5 & x_6 & x_7 & x_8 & x_9\\
+        x_{10} & x_{11} & x_{12} & x_{13} & x_{14}
+    \end{array}
+\right)
+= 
+\left(
+\begin{array}{ccccc}
+ x_0 & x_3 & x_2 & x_1 & x_4 \\
+ x_5 & x_8 & x_7 & x_6 & x_9 \\
+ x_{10} & x_{13} & x_{12} & x_{11} & x_{14}
+\end{array}
+\right) 
+}
+\]
+
+Su matriz asociada es:
+
+ \[
+\Scale[1]{
+\left(
+\begin{array}{ccccc}
+ 1 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 1 & 0 \\
+ 0 & 0 & 1 & 0 & 0 \\
+ 0 & 1 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 1
+\end{array}
+\right)
+}
+\]
+
+Para cambiar el orden de las filas solo hace falta intercambiar posiciones de la matriz identidad correspondiente.
+
+Si se quisiera la columna $C_3$ con la $C_4$ se puede emplear una transformación descrita con la matriz:
+
+ \[
+\Scale[1]{
+\left(
+\begin{array}{ccccc}
+ 1 & 0 & 0 & 0 & 0 \\
+ 0 & 1 & 0 & 0 & 0 \\
+ 0 & 0 & 1 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 1 \\
+ 0 & 0 & 0 & 1 & 0
+\end{array}
+\right)
+}
+\]
+
+Podemos aplicar ésta forma de transformación a \texttt{Bytes}, donde haremos un \textit{swap} entre la columna $R_1$ y $R_{31-(1-1)}$
+
+\[
+T_1 = \Scale[0.8]{
+\left(
+\begin{array}{cccccccccccccccccccccccccccccccc}
+ 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+ 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+ 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+\end{array}
+\right)
+}
+\]
+
+En la figura \ref{fig:filasC2}, se puede apreciar el cambio logrado al intercambiar ambas filas entre sí.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{fila2}
+    \caption{Visualización de Bytes$\times T_1$}
+    \label{fig:filasC2}
+\end{figure}
+
+
+Para cambiar el orden de las filas, lo que se puede hacer es multiplicar las filas por $-1$ en la transformación, eso hace que, al momento de aplicar la misma a la matriz \texttt{Bytes} y obtener una matriz congruente por medio de la aplicación del módulo a todos sus elementos, se de el efecto deseado, en el que el orden de las filas son cambiadas de lugar en ciertas columnas.
+
+Un ejemplo, aplicamos a \texttt{Bytes} una transformación cuya matriz asociada es:
+
+\[
+T_2 = \Scale[0.8]{
+\left(
+\begin{array}{cccccccccccccccccccccccccccccccc}
+ 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+\end{array}
+\right)
+}
+\]
+
+donde solo se cambia el signo de la fila $R_2$ y la fila $R_{31 - (2 - 1)}$ para no tener pérdidas de información recordando la lista de requisitos de toda transformación aplicada a Bytes. Luego de obtener solo enteros congruentes $(\text{mod} 32)$, el resultado se aprecia en la siguiente figura \ref{fig:filasC}:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{fila}
+    \caption{Visualización de Bytes$\times T_2$}
+    \label{fig:filasC}
+\end{figure}
+
+Es fácilmente apreciable el cambio. Como mencionado antes, la fila $R_2$ y la fila $R_{31 - (2 - 1)}$ tienen los valores verticales intercambiados.
+
+Podemos mezclar los dos tipos de transformaciones mencionadas antes para generar un diccionario que cambia totalmente la forma del mensaje a nivel de bytes de un archivo.
+
+Por ejemplo, con la matriz asociada a $T_3$:
+
+\[
+T_3 = \Scale[0.6]{
+\left(
+\begin{array}{cccccccccccccccccccccccccccccccc}
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 \\
+ 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+ 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+ 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+\end{array}
+\right)
+}
+\]
+
+Podemos transformar \texttt{Bytes} de forma que obtenemos como resultado:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{orig1}
+    \caption{Visualización de \texttt{Bytes}}
+    \label{fig:TFinalOrig}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{final1}
+    \caption{Visualización de \texttt{Bytes}$\times T_3$}
+    \label{fig:TFinalFinal}
+\end{figure}
+
+Por todo lo anterior podemos decir que
+
+\[
+\text{Bytes} \times T \equiv \alpha \text{ (mod 255)}
+\]
+
+Donde \texttt{Bytes} es la matriz de 8x32 que contiene todos los valores representables por un byte y $T$ es una transformación aleatoria formada siguiendo las reglas descritas al inicio de la sección. Siendo $\alpha$ el resultado de la transformación, que puede ser usado como asociación para remplazar los bytes del archivo.
+
+De forma en que, similar al famoso \textit{Caesar Cipher}, representa un mapeo de llave y valor que da la ilusión de desplazamiento o \textit{swap} de valores.
+
+Ejemplo:
+\[
+\begin{array}{cc}
+    0x00 & 0x00 \\
+    0x01 & 0x0F\\
+    0x02 & 0x0A 
+\end{array}
+\]
+
+De forma en que \texttt{0x00} pasará a valer \texttt{0x00}, \texttt{0x01} pasará a valer \texttt{0xFF}, etc. Mapeo que es realizado en base a la comparación entre \texttt{Bytes} y $\alpha$.
+
+Luego de lo experimentado, nuestro algoritmo queda así:
+
+\begin{outline}[enumerate]
+    \1 Solicitar al usuario el archivo a cifrar
+    \1 Comprobar que el usuario ingresó un archivo, no un directorio
+    \1 Comprobar que el usuario ingresó un archivo que existe en el sistema
+    \1 Generar una matriz cuadrada de 32x32 con 0 en ella
+    \1 Popular $R_1$ con el valor por defecto: \{1, 0, 0, 0, ...\}
+    \1 Generar una matriz asociada de una $T$ de forma aleatoria. Cumpliendo las reglas:
+        \2 Si se modifica $C_x$ se debe afectar $C_y$ donde $x$ es un número entero del 0 al 31 y $y = 31 - (x-1)$
+        \2 No se puede modificar a $R_1$
+    \1 Aplicar la transformación $T$ a \texttt{Bytes} y almacenar el resultado
+    \1 Armar un \texttt{HashMap} con los valores del resultado.
+    \1 Calcular la matriz inversa de la matriz asociada a $T$
+    \1 Escribir una firma de archivo para saber cuando el ususario ingresa un archivo que no ha sido cifrado
+    \1 Escribir la matriz inversa como \textit{metadata} en el archivo cifrado para poder descifrarlo
+    \1 Escribir el estado de bytes inverso como \textit{metadata} en el archivo cifrado para poder descifrarlo
+    \1 Reemplazar todos los bytes del archivo objetivo por las asociaciones descritas en el \texttt{HashMap}
+\end{outline}
+
+Se puede observar el algoritmo que genera la matriz asociada a la transformación en el \texttt{Appendix B}
+
+De modo en que los primeros 4 bytes del archivo cifrado deben verse:
+
+\begin{minted}{rust}
+42 3C 0A FF
+\end{minted}
+
+Para saber que se trata de un archivo cifrado.
+
+Después se encontrarán 2049 bytes describiendo la inversa de $T$, en ellos, cada byte inmedianto anterior representa si en la matriz se contaba con un número negativo \texttt{0x01} o positivo \texttt{0x00} seguido del valor (\texttt{0x00} | \texttt{0x01})
+
+\begin{minted}{rust}
+00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+...
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+\end{minted}
+
+Luego, la descripición del estado final de \texttt{Bytes} luego de aplicarle $T$
+
+\begin{minted}{rust}
+00 E1 02 FD E4 E5 FA F9 E8 F7 EA F5 F4 F3 F2 F1 F0 EF EE ED EC EB F6 E9 F8 E7 E6 FB FC
+E3 1E FF 20 C1 22 DD C4 C5 DA D9 C8 D7 CA D5 D4 D3 D2 D1 D0 CF CE CD CC CB D6 C9 D8 C7
+...
+\end{minted}
+
+Y por último los bits cifrados del mensaje original.
+
+\begin{minted}{rust}
+A8 91 94 81 20 93 85 20 94 94 81 93 91 20 84 81 92 97 85 94
+\end{minted}
+
+\subsubsection{Descifrado}
+
+De modo en que:
+
+\[
+\text{Bytes} \times T \equiv \alpha \text{ (mod 255)}
+\]
+
+Entonces:
+
+
+\[
+\alpha \times T^{-1} \equiv \text{Bytes} \text{ (mod 255)}
+\]
+
+Es por esa razón por la que experimentamos almacenando $\alpha$ y $T^{-1}$ dentro del mismo archivo cifrado, de forma en que podemos rápidamente recuperarlos para descifrar los bytes que en él se contengan.
+
+Como decidimos almacenar en el mismo archivo cifrado los datos que nos permiten armar la matriz inversa para regresar del estado cifrado al texto normal, usaremos el algoritmo:
+
+\begin{outline}[enumerate]
+    \1 Solicitar al usuario el archivo a descifrar
+    \1 Comprobar que el usuario ingresó un archivo, no un directorio
+    \1 Comprobar que el usuario ingresó un archivo que existe en el sistema
+    \1 Generar una matriz cuadrada de 32x32 con 0 en ella llamada \texttt{key}
+    \1 Generar una matriz cuadrada de 8x32 con 0 en ella llamada \texttt{inv}
+    \1 Popular \texttt{key} con los valores almacenados como metadata en el archivo cifrado
+    \1 Popular \texttt{inv} con los valores almacenados como metadata en el archivo cifrado
+    \1 Aplicar la transformación $T^{-1}$ (\texttt{inv}) a \texttt{key} y almacenar el resultado
+    \1 Armar un \texttt{HashMap} con los valores del resultado.
+    \1 Reemplazar todos los bytes del archivo cifrado por las asociaciones descritas en el \texttt{HashMap}
+\end{outline}
+
+\subsection{Método 2}
+
+Éste segundo método es similar al primero en el sentido de que usamos las bases:
+
+
+\[
+\beta \times T \equiv \alpha \text{ (mod 255)}\\
+\therefore \alpha \times T^{-1} \equiv \beta \text{ (mod 255)}
+\]
+
+\newpage
+\section{Resultados}
+
+Luego de la experimentación con Mathematica, se implementaron ambos algoritmos con Rust usando las dependencias:
+
+\begin{enumerate}
+    \item \texttt{clap "3.1.17"}: Para tener un manejo y estructura más sencilla de los argumentos y comandos del programa
+    \item \texttt{nalgebra "0.31.0"}: Librería para tener a disposición matrices de tamaño arbitrario. También brinda operaciones como multiplicación de matrices u obtener la inversa.
+    \item \texttt{rand "0.8.5"}: Para la generación de números aleatorios empleados al momento de construir la matriz asociada a la transformación $T$ en cada ejecución,
+\end{enumerate}
+
+La utilidad de linea de comandos desarrollada cuenta con dos verbos principales:
+
+\begin{enumerate}
+    \item \texttt{cypher} (con alias c): Cifra un archivo remplazándolo por uno con la extensión \texttt{.lcy}. Elimina el archivo original al terminal.
+    \item \texttt{decipher} (con alias d): Descifra un archivo. Crea un archivo con el nombre original, sin extensión \texttt{.lcy} donde coloca los resultados. Elimina el archivo cifrado al terminal.
+\end{enumerate}
 
 \begin{figure}[H]
     \centering
@@ -333,6 +794,11 @@ cifrado. $N$}
     \label{fig:DatosOrigM3}
 \end{figure}
 
+\newpage
+\section{Discusión de Resultados}
+
+\subsection{Método 1}
+
 La mayor vulnerabilidad que presenta este método de cifrado es que la
 frecuencia de bytes presentes es la misma debido a que no estamos
 sacrificando ninguna pérdida de información y, por lo tanto, solo sustituimos los
@@ -346,20 +812,26 @@ original y el cifrado.}
     \label{fig:Histo1}
 \end{figure}
 
-E N la figura \ref{fig:Histo1}, se muestra la sobre posición de los histogramas
+En la figura \ref{fig:Histo1}, se muestra la sobre posición de los histogramas
 de bytes del documento antes y después de cifrado. Ambos son idénticos. Si el
 documento está escrito en Inglés o contuviera las instrucciones de cierta
 arquitectura, y se conoce la frecuencia de bytes, el mensaje puede ser
 descifrado.
 
+\subsection{Método 2}
 
-\printbibliography
+\newpage
+\section{Conclusiones y Recomendaciones}
+
+\newpage
+\section{Bibliografía}
+\printbibliography[heading=none]
 
 \newpage
 
 \appendix
 
-\section*{Appendix A}
+\section{Appendix}
 
 Comparación de histograma de las ocurrencias de bytes entre un arreglo de bytes
 y su versión cifrada por el \texttt{Método 1}
@@ -385,7 +857,7 @@ original y el cifrado.}\label{fig:d1}
 original y el cifrado.}\label{fig:d2}
 \end{figure}
 
-Graficas elaboradas en Mathematica 13 con el código:
+Gráficas elaboradas en Mathematica 13 con el código:
 
 \begin{minted}[linenos]{wolfram}
 Show[
@@ -411,5 +883,243 @@ Show[
 donde \texttt{baa} es un arreglo de bytes conteniendo el estado del archivo
 original y donde \texttt{bx} es una matriz que se usa como arreglo de bytes que
 contiene el estado cifrado de los contenidos de donde \texttt{baa}.
+
+\newpage
+\section{Appendix}
+
+\begin{minted}[linenos]{rust}
+pub fn met1_armar_matriz(rng: &mut ThreadRng) -> DMatrix<f32> {
+    let mut resultado: DMatrix<f32> = dmatrix![].resize(32, 32, 0.0);
+
+    let mut switch: [bool; 32] = [false; 32];
+    let mut neg: [bool; 32] = [false; 32];
+
+    for col in 1..32 / 2 {
+        if rng.gen::<u8>() % 2 == 0 {
+            switch[col] = true;
+            switch[31 - (col - 1)] = true;
+        }
+
+        if rng.gen::<u8>() % 5 == 0 {
+            neg[col] = true;
+            neg[31 - (col - 1)] = true;
+        }
+    }
+
+    resultado[(0, 0)] = 1.0;
+
+    for col in 1..32 {
+        if switch[col] {
+            resultado[(col, 31 - (col - 1))] = if neg[col] { 1.0 } else { -1.0 };
+        } else {
+            resultado[(col, col)] = if neg[col] { 1.0 } else { -1.0 };
+        }
+    }
+
+    let switch_mat: DMatrix<bool> = DMatrix::from_vec(1, 32, Vec::from(switch));
+
+    resultado
+}
+\end{minted}
+
+\newpage
+\section{Appendix}
+
+\begin{minted}[linenos]{rust}
+extern crate nalgebra as na;
+
+use divisors::get_divisors;
+use lcy::*;
+use std::collections::HashMap;
+use std::fs::{remove_file, OpenOptions};
+use std::io::{Read, Seek, Write};
+use std::process::exit;
+
+use na::{dmatrix, DMatrix};
+
+fn main() {
+    let mut rng = rand::thread_rng();
+    let args: Args = Args::parse();
+
+    let mut map: HashMap<u8, u8> = HashMap::new();
+
+    match args.command {
+        Commands::Cypher { path } => {
+            let bytes: DMatrix<f32> = dmatrix![ ... ];
+
+            if !path.exists() {
+                eprintln!("Error: El archivo {} no existe!", path.display());
+                exit(1)
+            }
+
+            let mut file = OpenOptions::new()
+                .read(true)
+                .write(true)
+                .create(false)
+                .open(&path)
+                .unwrap();
+
+            let mut file2 = OpenOptions::new()
+                .write(true)
+                .create(true)
+                .truncate(true)
+                .open(&format!("{}.lcy", &path.display()))
+                .unwrap();
+
+            let mut contenidos: Vec<u8> = vec![];
+
+            file.read_to_end(&mut contenidos).unwrap();
+
+            let mat = met1_armar_matriz(&mut rng);
+            let mut key = &bytes * &mat;
+            let inv_key = mat.clone().try_inverse().unwrap();
+
+            for i in 0..8usize {
+                for j in 0..32usize {
+                    key[(i, j)] = key[(i, j)].rem_euclid(256.0);
+                    map.insert(bytes[(i, j)] as u8, key[(i, j)] as u8);
+                }
+            }
+
+            for i_byte in 0..contenidos.len() {
+                contenidos[i_byte] = *map.get(&contenidos[i_byte]).unwrap();
+            }
+
+            let mut inv_key_to_write = vec![];
+            let mut bytes_final_to_write = vec![];
+            for i in 0..32 {
+                for j in 0..32 {
+                    let indicador = if inv_key[(i, j)] < 0.0 { 1u8 } else { 0u8 };
+                    let val = if inv_key[(i, j)] < 0.0 {
+                        -1.0 * inv_key[(i, j)]
+                    } else {
+                        inv_key[(i, j)]
+                    };
+
+                    inv_key_to_write.push(indicador);
+                    inv_key_to_write.push(val as u8);
+                }
+            }
+
+            for i in 0..8 {
+                for j in 0..32 {
+                    bytes_final_to_write.push(key[(i, j)] as u8);
+                }
+            }
+
+            file2.write_all(&[66u8, 60u8, 10u8, 255u8]).unwrap();
+            file2.write_all(&inv_key_to_write).unwrap();
+            file2.write_all(&bytes_final_to_write).unwrap();
+            file2.write_all(&contenidos).unwrap();
+
+            remove_file(path).unwrap();
+        }
+        Commands::Decipher { path } => { ... }
+    }
+}
+\end{minted}
+
+\newpage
+\section{Appendix}
+
+\begin{minted}[linenos]{rust}
+extern crate nalgebra as na;
+
+use divisors::get_divisors;
+use lcy::*;
+use std::collections::HashMap;
+use std::fs::{remove_file, OpenOptions};
+use std::io::{Read, Seek, Write};
+use std::process::exit;
+
+use na::{dmatrix, DMatrix};
+
+fn main() {
+    let mut rng = rand::thread_rng();
+    let args: Args = Args::parse();
+
+    let mut map: HashMap<u8, u8> = HashMap::new();
+
+    match args.command {
+        Commands::Cypher { path } => { ... }
+        Commands::Decipher { path } => {
+            if !path.exists() {
+                eprintln!("Error: El archivo {} no existe!", path.display());
+                exit(1)
+            }
+
+            let orig_path = path.as_os_str().to_str().unwrap().replace(".lcy", "");
+
+            let mut file_ci = OpenOptions::new()
+                .read(true)
+                .write(true)
+                .create(false)
+                .open(&path)
+                .unwrap();
+
+            let mut file = OpenOptions::new()
+                .read(true)
+                .write(true)
+                .truncate(true)
+                .create(true)
+                .open(&orig_path)
+                .unwrap();
+
+            let mut contenidos: Vec<u8> = vec![];
+
+            file_ci.read_to_end(&mut contenidos).unwrap();
+
+            if contenidos[0..0x4] != [66u8, 60u8, 10u8, 255u8] {
+                eprintln!("Error: No es un archivo válido cifrado");
+                exit(1);
+            }
+
+            let mut inv = dmatrix![].resize(32, 32, 0.0);
+            let mut key = dmatrix![].resize(8, 32, 0.0);
+
+            let contenidos = &contenidos[0x4..];
+
+            let mut k = 0;
+            for i in 0..32 {
+                for j in 0..32 {
+                    let neg = contenidos[k] == 0x1;
+                    let val = (contenidos[k + 1] as i32) * if neg { -1 } else { 1 };
+
+                    inv[(i, j)] = val as f32;
+                    k += 2;
+                }
+            }
+
+            let contenidos = &contenidos[k..];
+
+            let mut k = 0;
+            for i in 0..8 {
+                for j in 0..32 {
+                    key[(i, j)] = contenidos[k] as f32;
+                    k += 1;
+                }
+            }
+
+            let mut orig = &key * &inv;
+
+            for i in 0..8usize {
+                for j in 0..32usize {
+                    orig[(i, j)] = orig[(i, j)].rem_euclid(256.0);
+                    map.insert(key[(i, j)] as u8, orig[(i, j)] as u8);
+                }
+            }
+
+            let mut contenidos = contenidos[k..].to_vec();
+
+            for i_byte in 0..contenidos.len() {
+                contenidos[i_byte] = *map.get(&contenidos[i_byte]).unwrap();
+            }
+
+            file.write_all(&contenidos).unwrap();
+            remove_file(path).unwrap();
+        }
+    }
+}
+\end{minted}
 
 \end{document}
