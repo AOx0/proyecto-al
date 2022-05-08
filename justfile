@@ -7,6 +7,7 @@ sync:
 
 open:
     qil Preview
+    sleep 1
     open test.pdf -a Preview    
 
 build stage="1" mac="0":
