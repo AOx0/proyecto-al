@@ -1427,8 +1427,75 @@ Eliminamos a su vez el archivo cifrado
 
 \subsection{Ejecución}
 
-A continuación se puede apreciar la diferencia de bytes entre el archivo
-original y el cifrado.
+Contamos con un archivo \texttt{texto.txt} que cuenta con el texto:
+
+\begin{minted}{rust}
+Éste es un mensaje super secreto!
+
+\end{minted}
+
+Cuyos bytes se ven de la forma:
+
+\begin{minted}{rust}
+C3 89 73 74 65 20 65 73 20 75 6E 20 6D 65 6E 73 61 6A 65 20 73 75 70 65 72 20
+73 65 63 72 65 74 6F 21 0A 0A
+\end{minted}
+
+Después de ejecutar la herramienta de cifrado por medio del comando:
+
+\begin{minted}{rust}
+    lcy cypher texto.txt
+\end{minted}
+
+Obtenemos un archivo llamado \texttt{texto.txt.lcy} que contiene:
+
+\begin{minted}{rust}
+"    B<
+??????????????????????????????
+?>???????????????????????????\"?@?^???????????????????????????\
+B?`?~?????????????
+??????????????b??}d{zghwvulmropqnstkjixyfe|c?a?_?]D[\
+ZGHWVULMROPQNSTKJIXYFE\\C
+?A???=$;:'(765,-2/01.34+*)89&%<#?!??
+
+
+    ?=w??? ?? ?? ??????? ????? ??????????"
+\end{minted}
+
+Cuyos bytes se ven de la forma en que se muestra en el Apéndice G
+
+Se puede distinguir la firma del archivo:
+
+\begin{minted}{rust}
+42 3C 0A FF 
+\end{minted}
+
+Después una larga lista de \texttt{00} y \texttt{01} que describen la matriz
+inversa seguido de los 32 * 8 bytes que describen \text{BytesCifrados}
+
+\begin{minted}{rust}
+FF 1E FD E4 FB FA E7 E8 F7 F6 F5 EC ED F2 EF F0 F1 EE F3 F4 EB EA E9 F8 F9 E6
+E5 FC E3 02 E1 20 DF 3E DD C4 DB DA C7 C8 D7 D6 D5 CC CD D2 CF D0 D1 CE D3 D4
+CB CA C9 D8 D9 C6 C5 DC C3 22 C1 40 BF 5E BD A4 BB BA A7 A8 B7 B6 B5 AC AD B2
+AF B0 B1 AE B3 B4 AB AA A9 B8 B9 A6 A5 BC A3 42 A1 60 9F 7E 9D 84 9B 9A 87 88
+97 96 95 8C 8D 92 8F 90 91 8E 93 94 8B 8A 89 98 99 86 85 9C 83 62 81 80 7F 9E
+7D 64 7B 7A 67 68 77 76 75 6C 6D 72 6F 70 71 6E 73 74 6B 6A 69 78 79 66 65 7C
+63 82 61 A0 5F BE 5D 44 5B 5A 47 48 57 56 55 4C 4D 52 4F 50 51 4E 53 54 4B 4A
+49 58 59 46 45 5C 43 A2 41 C0 3F DE 3D 24 3B 3A 27 28 37 36 35 2C 2D 32 2F 30
+31 2E 33 34 2B 2A 29 38 39 26 25 3C 23 C2 21 E0 1F FE 1D 04 1B 1A 07 08 17 16
+15 0C 0D 12 0F 10 11 0E 13 14 0B 0A 09 18 19 06 05 1C 03 E2 01
+\end{minted}
+
+Y por último los \texttt{0x24} bytes del mensaje cifrado
+
+\begin{minted}{rust}
+3D 77 93 94 9B 20 9B 93 20 8B 92 20 8D 9B 92 93 9F 96 9B 20 93 8B 90 9B 8E 20
+93 9B 9D 8E 9B 94 8F DF F6 F6
+\end{minted}
+
+A continuación se puede apreciar la diferencia de
+bytes entre dos archivos. Uno cifrado por el mismo algoritmo y su versión
+original
 
 \begin{figure}[H]
     \centering
@@ -1457,7 +1524,8 @@ sea reconocible por ningún programa como el ejecutable que era.
     \label{fig:DatosOrigM3}
 \end{figure}
 
-
+Para quien abre el archivo, las claves de qué se trata son pocas, aún más
+desconociendo la existencia de la herramienta (\texttt{lcy})
 
 \newpage
 \section{Discusión de Resultados}
@@ -1561,16 +1629,37 @@ los archivos necesarios para descifrarlo en su computador.
 \newpage
 \section{Conclusiones y Recomendaciones}
 
-En una época donde ocurren muchos ataques y la gente de todo tipo almacena
-información de todo tipo en sus dispositivos móviles o en sus computadoras, una
-capa más de seguridad no afecta a nadie.
+Como pudimos observar en todo el documento la importancia del algebra lineal en
+nuestras vidas cotidianas, como pueden ser en distintos aspectos, aunque en
+esta ocasión nos quisimos centrar en la importancia que tiene este en la
+ciberseguridad.
+
+Pero viviendo en una época en donde ocurren muchos ataques y como cualquier
+persona almacena cualquier tipo de información en sus dispositivos móviles o en
+sus computadoras, una capa más de seguridad no afectaría a nadie.
 
 Las transformaciones resultan una herramienta invaluable para producir
 algoritmos sencillos y efectivos de cifrado y descifrado de archivos, imágenes,
 etc. Es trivial manipular la información cuando se razona desde el punto de
 vista de ser una matriz.
 
+Está claro que falta explorar más formas de desarrollar el algoritmo para
+disminuir las posibilidades de que agentes externos entiendan información
+sensible que se encuentre almacenada.
 
+Entre las mejoras a implementar se encuentra eliminar la posibilidad de
+descifrado por medio de histogramas de los bytes. Creemos que el método 2
+estudiado en la experimentación es capaz de lograrlo.
+
+Además, mejorar la base de código para que cada pieza necesaria sea almacenada
+en un archivo distinto para ser usados como llaves y la posibilidad de asociar
+matrices a caracteres para aumentar la seguridad aún más.
+
+Aunque se cumplió el objetivo de implementar una herramienta de cifrado y
+descifrado
+a
+nivel de bytes usando transformaciones y matrices, creemos que queda abierto el
+espacio para seguir investigando.
 
 \newpage
 \section{Bibliografía}
@@ -2114,5 +2203,103 @@ let val = (contenidos[k + 1] as i32) * if neg { -1 } else { 1 };
 disponible en\\  \texttt{https://www.overleaf.com/read/gkdvygxgntsh} y en
 \texttt{https://github.com/AOx0/proyecto-al}
 \end{enumerate}
+
+\newpage
+\section{Appendix}
+
+\begin{minted}{rust}
+42 3C 0A FF 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 00 01 01 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01 00 00 00 00
+00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 01 00 FF
+1E FD E4 FB FA E7 E8 F7 F6 F5 EC ED F2 EF F0 F1 EE F3 F4 EB EA E9 F8 F9 E6 E5
+FC E3 02 E1 20 DF 3E DD C4 DB DA C7 C8 D7 D6 D5 CC CD D2 CF D0 D1 CE D3 D4 CB
+CA C9 D8 D9 C6 C5 DC C3 22 C1 40 BF 5E BD A4 BB BA A7 A8 B7 B6 B5 AC AD B2 AF
+B0 B1 AE B3 B4 AB AA A9 B8 B9 A6 A5 BC A3 42 A1 60 9F 7E 9D 84 9B 9A 87 88 97
+96 95 8C 8D 92 8F 90 91 8E 93 94 8B 8A 89 98 99 86 85 9C 83 62 81 80 7F 9E 7D
+64 7B 7A 67 68 77 76 75 6C 6D 72 6F 70 71 6E 73 74 6B 6A 69 78 79 66 65 7C 63
+82 61 A0 5F BE 5D 44 5B 5A 47 48 57 56 55 4C 4D 52 4F 50 51 4E 53 54 4B 4A 49
+58 59 46 45 5C 43 A2 41 C0 3F DE 3D 24 3B 3A 27 28 37 36 35 2C 2D 32 2F 30 31
+2E 33 34 2B 2A 29 38 39 26 25 3C 23 C2 21 E0 1F FE 1D 04 1B 1A 07 08 17 16 15
+0C 0D 12 0F 10 11 0E 13 14 0B 0A 09 18 19 06 05 1C 03 E2 01 3D 77 93 94 9B 20
+9B 93 20 8B 92 20 8D 9B 92 93 9F 96 9B 20 93 8B 90 9B 8E 20 93 9B 9D 8E 9B 94
+8F DF F6 F6
+\end{minted}
+
 
 \end{document}
