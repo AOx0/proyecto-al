@@ -1430,7 +1430,7 @@ Eliminamos a su vez el archivo cifrado
 Contamos con un archivo \texttt{texto.txt} que cuenta con el texto:
 
 \begin{minted}{rust}
-Éste es un mensaje super secreto!
+Este es un mensaje super secreto!
 
 \end{minted}
 
@@ -1511,7 +1511,7 @@ original. $M$}
     \caption{Visualización de los bytes del archivo
 cifrado. $N$}
     \label{fig:DatosOrigM2}
-\end{figure}
+\end{figure}\oplus\odot
 
 Todos los puntos grises y amarillos de la figura \ref{fig:DatosOrigM3} son los
 bytes que no cambiaron, si lo hicieron los suficientes para que el archivo no
@@ -1526,6 +1526,19 @@ sea reconocible por ningún programa como el ejecutable que era.
 
 Para quien abre el archivo, las claves de qué se trata son pocas, aún más
 desconociendo la existencia de la herramienta (\texttt{lcy})
+
+Para descifrar el archivo solo se necesita usar el comando:
+
+\begin{minted}{rust}
+    lcy decipher texto.txt.lcy
+\end{minted}
+
+Lo que crea un archivo llamado \texttt{texto.txt} que contiene:
+
+\begin{minted}{rust}
+Este es un mensaje super secreto!
+
+\end{minted}
 
 \newpage
 \section{Discusión de Resultados}
